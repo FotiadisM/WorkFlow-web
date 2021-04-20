@@ -3,11 +3,11 @@ import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { useRouter } from "next/router";
 
-const navigation: { name: string; href: string; current: boolean }[] = [
-  { name: "Home", href: "/home", current: true },
-  { name: "Network", href: "#", current: false },
-  { name: "Messages", href: "#", current: false },
-  { name: "Job Openings", href: "/jobs", current: false },
+const navigation: { name: string; href: string }[] = [
+  { name: "Home", href: "/home" },
+  { name: "Network", href: "#" },
+  { name: "Messages", href: "#" },
+  { name: "Job Openings", href: "/jobs" },
 ];
 
 const profileOptions: { name: string; href: string }[] = [
@@ -43,7 +43,7 @@ export default function Navbar() {
                       : "text-gray-300 hover:bg-gray-700 hover:text-white",
                     "px-3 py-2 rounded-md text-sm font-medium"
                   )}
-                  aria-current={item.current ? "page" : undefined}
+                  aria-current={router.route === item.href ? "page" : undefined}
                 >
                   {item.name}
                 </a>
@@ -98,7 +98,7 @@ export default function Navbar() {
                               <a
                                 className={classNames(
                                   active ? "bg-gray-100" : "",
-                                  "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                  "block px-4 py-2 text-sm text-gray-700 hover:bg-purple-800 hover:text-white"
                                 )}
                               >
                                 {p.name}
