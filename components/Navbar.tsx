@@ -1,19 +1,19 @@
-/* This example requires Tailwind CSS v2.0+ */
 import Link from "next/link";
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
+import { useRouter } from "next/router";
 
 const navigation: { name: string; href: string; current: boolean }[] = [
-  { name: "Dashboard", href: "#", current: true },
-  { name: "Team", href: "#", current: false },
-  { name: "Projects", href: "#", current: false },
-  { name: "Calendar", href: "#", current: false },
+  { name: "Home", href: "/home", current: true },
+  { name: "Network", href: "#", current: false },
+  { name: "Messages", href: "#", current: false },
+  { name: "Job Openings", href: "/jobs", current: false },
 ];
 
-const profileOptions: { name: string; href: string; current: boolean }[] = [
-  { name: "Your Profile", href: "#", current: false },
-  { name: "Settings", href: "#", current: false },
-  { name: "Sign out", href: "#", current: false },
+const profileOptions: { name: string; href: string }[] = [
+  { name: "Your Profile", href: "#" },
+  { name: "Settings", href: "#" },
+  { name: "Sign out", href: "#" },
 ];
 
 const classNames = (...classes: string[]) => {
@@ -21,29 +21,24 @@ const classNames = (...classes: string[]) => {
 };
 
 export default function Navbar() {
+  const router = useRouter();
+
   return (
     <nav className="bg-gray-800">
-      <div className="mx-auto px-10 py-4">
+      <div className="px-10 py-4">
         <div className="flex items-center justify-between">
           <div className="flex space-x-4">
-            <div className="flex items-center">
-              <img
-                className="block lg:hidden h-8 w-auto"
-                src="https://tailwindui.com/img/logos/workflow-mark-indigo-500.svg"
-                alt="Workflow"
-              />
-              <img
-                className="hidden lg:block h-8 w-auto"
-                src="https://tailwindui.com/img/logos/workflow-logo-indigo-500-mark-white-text.svg"
-                alt="Workflow"
-              />
-            </div>
+            <img
+              className="block h-8 w-auto"
+              src="https://tailwindui.com/img/logos/workflow-logo-indigo-500-mark-white-text.svg"
+              alt="Workflow"
+            />
             {navigation.map((item) => (
-              <Link href={item.href}>
+              <Link key={item.name} href={item.href}>
                 <a
                   key={item.name}
                   className={classNames(
-                    item.current
+                    router.route === item.href
                       ? "bg-gray-900 text-white"
                       : "text-gray-300 hover:bg-gray-700 hover:text-white",
                     "px-3 py-2 rounded-md text-sm font-medium"
@@ -103,7 +98,7 @@ export default function Navbar() {
                               <a
                                 className={classNames(
                                   active ? "bg-gray-100" : "",
-                                  "block px-4 py-2 text-sm text-gray-700"
+                                  "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                 )}
                               >
                                 {p.name}
