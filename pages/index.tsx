@@ -1,4 +1,5 @@
 import Link from "next/link";
+import React from "react";
 
 const navigation: { name: string; href: string }[] = [
   { name: "Product", href: "#" },
@@ -17,14 +18,14 @@ function Navbar() {
           alt="company logo"
         />
         {navigation.map((i) => (
-          <Link href={i.href}>
+          <Link key={i.name} href={i.href}>
             <a className="text-lg text-gray-500 hover:text-gray-800">
               {i.name}
             </a>
           </Link>
         ))}
       </div>
-      <button className="px-2 py-1 rounded-md border-2 border-purple-800 text-lg text-purple-800 hover:text-white hover:bg-purple-800 focus:outline-none">
+      <button className="btn px-2 py-1 border-2 border-purple-800 text-lg text-purple-800 hover:text-white hover:bg-purple-800">
         Sign Up
       </button>
     </nav>
@@ -32,6 +33,10 @@ function Navbar() {
 }
 
 export default function LandingPage() {
+  const onSignIn = (e: React.FormEvent) => {
+    e.preventDefault();
+  };
+
   return (
     <>
       <Navbar />
@@ -50,10 +55,10 @@ export default function LandingPage() {
               fugiat aliqua.
             </p>
             <div className="flex space-x-5 mt-6">
-              <button className="px-4 py-3 rounded-md bg-purple-800 text-white hover:bg-purple-900 focus:outline-none">
+              <button className="btn px-4 py-3 bg-purple-800 text-white hover:bg-purple-900">
                 Search for a job
               </button>
-              <button className="px-4 py-3 rounded-md bg-purple-100 text-purple-800 hover:bg-purple-200 focus:outline-none">
+              <button className="btn px-4 py-3 bg-purple-100 text-purple-800 hover:bg-purple-200">
                 Find a person you know
               </button>
             </div>
@@ -65,7 +70,7 @@ export default function LandingPage() {
         >
           <h2 className="text-4xl font-semibold text-purple-800">Sign in</h2>
           <hr className="border" />
-          <form className="mt-6 space-y-6 w-2/4">
+          <form className="mt-6 space-y-6 w-2/4" onSubmit={onSignIn}>
             <div className="rounded-md shadow-sm -space-y-px text-md">
               <div>
                 <label htmlFor="email-address" className="sr-only">
@@ -125,7 +130,7 @@ export default function LandingPage() {
             <div>
               <button
                 type="submit"
-                className="w-full py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-purple-800 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                className="w-full btn py-2 px-4 border border-transparent text-sm font-medium text-white bg-purple-800 hover:bg-purple-700 focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
               >
                 Sign in
               </button>
