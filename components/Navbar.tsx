@@ -24,12 +24,12 @@ export default function Navbar() {
   const router = useRouter();
 
   return (
-    <nav className="bg-gray-800">
+    <nav className="bg-purple-800">
       <div className="px-10 py-4">
         <div className="flex items-center justify-between">
           <div className="flex space-x-4">
             <img
-              className="block h-8 w-auto"
+              className="block h-8 w-auto texg-white"
               src="https://tailwindui.com/img/logos/workflow-logo-indigo-500-mark-white-text.svg"
               alt="Workflow"
             />
@@ -39,8 +39,8 @@ export default function Navbar() {
                   key={item.name}
                   className={classNames(
                     router.route === item.href
-                      ? "bg-gray-900 text-white"
-                      : "text-gray-300 hover:bg-gray-700 hover:text-white",
+                      ? "bg-purple-300 text-gray-700"
+                      : "text-gray-100 hover:bg-purple-600",
                     "px-3 py-2 rounded-md text-sm font-medium"
                   )}
                   aria-current={router.route === item.href ? "page" : undefined}
@@ -51,14 +51,13 @@ export default function Navbar() {
             ))}
           </div>
           <div className="flex items-center">
-            <button className="bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
+            <button className="bg-purple-800 p-1 rounded-full text-gray-100 hover:text-white focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-offset-purple-100 focus:ring-white">
               <span className="sr-only">View notifications</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="16"
                 height="16"
                 fill="currentColor"
-                className="bi bi-bell-fill"
                 viewBox="0 0 16 16"
               >
                 <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z" />
@@ -68,7 +67,7 @@ export default function Navbar() {
               {({ open }) => (
                 <>
                   <div>
-                    <Menu.Button className="bg-gray-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
+                    <Menu.Button className="bg-purple-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-purple-100 focus:ring-white">
                       <span className="sr-only">Open user menu</span>
                       <img
                         className="h-8 w-8 rounded-full"
