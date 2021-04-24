@@ -13,7 +13,7 @@ const navigation: { name: string; href: string }[] = [
 const profileOptions: { name: string; href: string }[] = [
   { name: "Your Profile", href: "#" },
   { name: "Settings", href: "#" },
-  { name: "Sign out", href: "#" },
+  { name: "Sign out", href: "/" },
 ];
 
 const classNames = (...classes: string[]) => {

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React from "react";
 
 const navigation: { name: string; href: string }[] = [
@@ -9,6 +10,8 @@ const navigation: { name: string; href: string }[] = [
 ];
 
 function Navbar() {
+  const router = useRouter();
+
   return (
     <nav className="flex items-center justify-between px-10 py-8">
       <div className="flex items-center space-x-10">
@@ -25,7 +28,10 @@ function Navbar() {
           </Link>
         ))}
       </div>
-      <button className="btn px-2 py-1 border-2 border-purple-800 text-lg text-purple-800 hover:text-white hover:bg-purple-800">
+      <button
+        className="btn px-2 py-1 border-2 border-purple-800 text-lg text-purple-800 hover:text-white hover:bg-purple-800"
+        onClick={() => router.push("/signup")}
+      >
         Sign Up
       </button>
     </nav>
@@ -33,8 +39,11 @@ function Navbar() {
 }
 
 export default function LandingPage() {
+  const router = useRouter();
+
   const onSignIn = (e: React.FormEvent) => {
     e.preventDefault();
+    router.push("/home");
   };
 
   return (
@@ -81,7 +90,7 @@ export default function LandingPage() {
                   name="email"
                   type="email"
                   autoComplete="email"
-                  required
+                  // required
                   className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10"
                   placeholder="Email address"
                 />
@@ -95,7 +104,7 @@ export default function LandingPage() {
                   name="password"
                   type="password"
                   autoComplete="current-password"
-                  required
+                  // required
                   className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10"
                   placeholder="Password"
                 />
