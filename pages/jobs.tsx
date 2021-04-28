@@ -1,6 +1,6 @@
 import { useState } from "react";
-import JobOpening from "../components/jobs/JobOpening";
-import Navbar from "../components/Navbar";
+import JobOpening from "@/components/jobs/JobOpening";
+import Navbar from "@/components/Navbar";
 
 const sideBar: { name: string }[] = [
   { name: "Career Opportunities " },
@@ -14,6 +14,11 @@ function classNames(...classes: string[]) {
 
 export default function Jobs() {
   const [curPage, setCurPage] = useState<string>(sideBar[0].name);
+  // const [navHeight, setNavHeight] = useState<number>(0);
+
+  // const getHeight = (h: number) => {
+  //   setNavHeight(h);
+  // };
 
   return (
     <>

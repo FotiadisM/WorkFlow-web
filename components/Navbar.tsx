@@ -2,10 +2,12 @@ import Link from "next/link";
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { useRouter } from "next/router";
+import { classNames } from "@/src/util";
+import { useLayoutEffect } from "@/src/useIsomorphicLayoutEffect";
 
 const navigation: { name: string; href: string }[] = [
   { name: "Home", href: "/home" },
-  { name: "Network", href: "#" },
+  { name: "Network", href: "/network" },
   { name: "Messages", href: "/conversations" },
   { name: "Job Openings", href: "/jobs" },
 ];
@@ -16,15 +18,24 @@ const profileOptions: { name: string; href: string }[] = [
   { name: "Sign out", href: "/" },
 ];
 
-const classNames = (...classes: string[]) => {
-  return classes.filter(Boolean).join(" ");
-};
+interface NavBarProps {
+  getHeight?: (h: number) => void;
+}
 
-export default function Navbar() {
+export default function Navbar({ getHeight }: NavBarProps) {
   const router = useRouter();
 
+  useLayoutEffect(() => {
+    if (getHeight !== undefined) {
+      const nav = document.getElementById("navbar");
+      if (nav !== null) {
+        getHeight(nav.offsetHeight);
+      }
+    }
+  }, []);
+
   return (
-    <nav className="bg-purple-800">
+    <nav id="navbar" className="bg-purple-800">
       <div className="px-10 py-4">
         <div className="flex items-center justify-between">
           <div className="flex space-x-4">

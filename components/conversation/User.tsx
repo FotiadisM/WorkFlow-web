@@ -1,4 +1,4 @@
-import { classNames } from "../../src/util";
+import { classNames } from "@/src/util";
 
 interface UserProps {
   user: { id: string; name: string; image: string };

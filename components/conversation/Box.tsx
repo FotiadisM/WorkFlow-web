@@ -1,5 +1,6 @@
-import { useLayoutEffect, useRef, useState } from "react";
-import { classNames } from "../../src/util";
+import { useRef, useState } from "react";
+import { classNames } from "@/src/util";
+import { useLayoutEffect } from "@/src/useIsomorphicLayoutEffect";
 
 interface Message {
   convID: string;
@@ -93,6 +94,7 @@ export default function Box({ user }: BoxProps) {
             value={curMsg}
             onChange={(e) => setCurMsg(e.target.value)}
             placeholder="Send a message.."
+            autoFocus
           />
           <button type="submit" className="focus:outline-none">
             <span className="sr-only">Send message</span>

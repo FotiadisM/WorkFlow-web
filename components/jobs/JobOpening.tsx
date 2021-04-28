@@ -152,34 +152,38 @@ export default function JobOpening({ isOwner }: JobOpeningPros) {
               Edit
             </button>
           ) : (
-            <button className="btn px-3 py-2 text-white bg-purple-800 hover:bg-purple-900 ">
+            <button className="btn px-3 py-2 text-white bg-purple-800 hover:bg-purple-700 active:bg-purple-900">
               I'm interested
             </button>
           )}
         </div>
       </div>
-      {open ? (
-        <div className="pt-3 pb-4 pl-2 space-y-4">
-          <JobDetail name={"Description"}>
-            <p className="text-gray-700 max-w-3xl">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-              reprehenderit in voluptate velit esse cillum dolore eu fugiat
-              nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-              sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </p>
-          </JobDetail>
-          <JobDetail name={"Prefered Skills"}>
-            <div className="flex space-x-2">
-              {["C", "C++", "Go", "Python"].map((i) => (
-                <div className="py-1 px-2 bg-gray-200 rounded-md">{i}</div>
-              ))}
-            </div>
-          </JobDetail>
-        </div>
-      ) : null}
+      {/* {open ? ( */}
+      <div
+        className={
+          (classNames("pt-3 pb-4 pl-2 space-y-4"), open ? "" : "hidden")
+        }
+      >
+        <JobDetail name={"Description"}>
+          <p className="text-gray-700 max-w-3xl">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+            aliquip ex ea commodo consequat. Duis aute irure dolor in
+            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+            culpa qui officia deserunt mollit anim id est laborum.
+          </p>
+        </JobDetail>
+        <JobDetail name={"Prefered Skills"}>
+          <div className="flex space-x-2">
+            {["C", "C++", "Go", "Python"].map((i) => (
+              <div className="py-1 px-2 bg-gray-200 rounded-md">{i}</div>
+            ))}
+          </div>
+        </JobDetail>
+      </div>
+      {/* ) : null} */}
     </div>
   );
 }
