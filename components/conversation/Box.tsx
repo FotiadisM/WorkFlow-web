@@ -100,8 +100,6 @@ export default function Box({ user }: BoxProps) {
             <span className="sr-only">Send message</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
               fill="currentColor"
               className="h-7 w-7 m-2 text-purple-800"
               viewBox="0 0 16 16"

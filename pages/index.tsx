@@ -29,7 +29,7 @@ function Navbar() {
         ))}
       </div>
       <button
-        className="btn px-2 py-1 border-2 border-purple-800 text-lg text-purple-800 hover:text-white hover:bg-purple-800 active:bg-purple-900"
+        className="btn px-2 py-1 border-2 border-purple-800 text-lg text-purple-800 hover:text-white hover:bg-purple-800 hover:shadow-xl active:bg-purple-900"
         onClick={() => router.push("/signup")}
       >
         Sign Up
@@ -64,10 +64,10 @@ export default function LandingPage() {
               fugiat aliqua.
             </p>
             <div className="flex space-x-5 mt-6">
-              <button className="btn px-4 py-3 bg-purple-800 text-white hover:bg-purple-700 active:bg-purple-900">
+              <button className="btn px-4 py-3 bg-purple-800 text-white hover:bg-purple-700 hover:shadow-xl active:bg-purple-900">
                 Search for a job
               </button>
-              <button className="btn px-4 py-3 bg-purple-100 text-purple-800 hover:bg-purple-200 active:bg-purple-300">
+              <button className="btn px-4 py-3 bg-purple-100 text-purple-800 hover:bg-purple-200 hover:shadow-xl active:bg-purple-300">
                 Find a person you know
               </button>
             </div>
