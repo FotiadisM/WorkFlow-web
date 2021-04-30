@@ -28,7 +28,7 @@ export default function Navbar({ getHeight }: NavBarProps) {
   }, []);
 
   return (
-    <nav id="navbar" className="bg-purple-800">
+    <nav id="navbar" className="bg-purple-900">
       <div className="px-10 py-4">
         <div className="flex items-center justify-between">
           <div className="flex space-x-4">

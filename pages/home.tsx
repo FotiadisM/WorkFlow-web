@@ -34,7 +34,7 @@ export default function Home() {
           className="absolute transform -translate-x-1/2 left-1/2"
           style={{ top: "10%" }}
         >
-          <div className="space-y-4">
+          <div className="space-y-4 pb-14">
             <CreatePost />
             {dummyPosts.map((p) => (
               <Post key={p.post_id} {...p} />
