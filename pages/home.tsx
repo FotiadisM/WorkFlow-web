@@ -1,6 +1,7 @@
-import { Post } from "@/components/homepage/Post";
-import Navbar from "@/components/Navbar";
 import { useState } from "react";
+import Navbar from "@/components/Navbar";
+import { Post } from "@/components/homepage/Post";
+import { CreatePost } from "@/components/homepage/CreatePost";
 
 export default function Home() {
   const [navHeight, setNavHeight] = useState<number>(0);
@@ -23,6 +24,7 @@ export default function Home() {
           style={{ top: "10%" }}
         >
           <div className="space-y-4">
+            <CreatePost />
             <Post />
             <Post />
             <Post />

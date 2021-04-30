@@ -118,6 +118,9 @@ const PostActions: React.FC<PostActionsProps> = ({
       >
         Comment
       </button>
+      <button className="flex-1 btn py-2 text-purple-800 hover:bg-gray-200">
+        Share
+      </button>
     </div>
   );
 };
@@ -129,7 +132,7 @@ export const Post: React.FC<PostProps> = ({}) => {
   const [openComments, setOpenComments] = useState<boolean>(false);
 
   return (
-    <div className="border rounded-lg shadow-lg" style={{ width: "550px" }}>
+    <div className="border rounded-lg shadow-lg" style={{ width: "600px" }}>
       <PostHead />
       <div className="py-3 px-5">
         <PostStats {...{ liked, setOpenComments }} />
