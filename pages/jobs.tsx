@@ -1,6 +1,6 @@
 import { useState } from "react";
 import JobOpening from "@/components/jobs/JobOpening";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/navbar/Navbar";
 import { classNames } from "@/src/util";
 
 const sideBar: { name: string }[] = [

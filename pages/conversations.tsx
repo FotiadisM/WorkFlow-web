@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Box from "@/components/conversation/Box";
 import User from "@/components/conversation/User";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/navbar/Navbar";
 
 const users: { id: string; name: string; image: string }[] = [
   {
