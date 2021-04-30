@@ -2,11 +2,53 @@ import { classNames } from "@/src/util";
 import { Dispatch, SetStateAction, useState } from "react";
 import { PostComments } from "./PostComments";
 
-interface PostHeadProps {}
+const PostType: React.FC<PostHeadProps> = ({ ftype, perpetaro_id }) => {
+  if (ftype === "like")
+    return (
+      <div className="px-3">
+        <span className="text-purple-800 hover:underline cursor-pointer">
+          Dimitris Manours
+        </span>{" "}
+        <span className="font-semibold text-purple-700">liked</span> a post.
+        <hr className="my-3" />
+      </div>
+    );
 
-const PostHead: React.FC<PostHeadProps> = ({}) => {
+  if (ftype === "share")
+    return (
+      <div className="px-3">
+        <span className="text-purple-800 hover:underline cursor-pointer">
+          Dimitris Manours
+        </span>{" "}
+        <span className="font-semibold text-purple-700">shared</span> a post.
+        <hr className="my-3" />
+      </div>
+    );
+
+  if (ftype === "comment")
+    return (
+      <div className="px-3">
+        <span className="text-purple-800 hover:underline cursor-pointer">
+          Dimitris Manours
+        </span>{" "}
+        <span className="font-semibold text-purple-700">comment</span> on a
+        post.
+        <hr className="my-3" />
+      </div>
+    );
+
+  return null;
+};
+
+interface PostHeadProps {
+  ftype: ftype;
+  perpetaro_id: string;
+}
+
+const PostHead: React.FC<PostHeadProps> = ({ ftype, perpetaro_id }) => {
   return (
-    <div className="pt-4 pb-1 px-3">
+    <div className="pt-4 px-3">
+      <PostType {...{ ftype, perpetaro_id }} />
       <div className="flex items-center justify-between mx-3">
         <div className="flex items-center">
           <img
@@ -20,6 +62,15 @@ const PostHead: React.FC<PostHeadProps> = ({}) => {
         </div>
         <div className="text-gray-600">12:31</div>
       </div>
+    </div>
+  );
+};
+
+interface PostBodyProps {}
+
+const PostBody: React.FC<PostBodyProps> = () => {
+  return (
+    <div className="px-3 pb-1">
       <div className="mx-2 mt-2 text-gray-800">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
         tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
@@ -125,15 +176,22 @@ const PostActions: React.FC<PostActionsProps> = ({
   );
 };
 
-interface PostProps {}
+type ftype = "post" | "share" | "like" | "comment";
 
-export const Post: React.FC<PostProps> = ({}) => {
+interface PostProps {
+  ftype: ftype;
+  post_id: string;
+  perpetaro_id: string;
+}
+
+export const Post: React.FC<PostProps> = ({ ftype, post_id, perpetaro_id }) => {
   const [liked, setLiked] = useState<boolean>(false);
   const [openComments, setOpenComments] = useState<boolean>(false);
 
   return (
-    <div className="border rounded-lg shadow-lg" style={{ width: "600px" }}>
-      <PostHead />
+    <div className="border rounded-lg shadow-lg" style={{ maxWidth: "600px" }}>
+      <PostHead {...{ ftype, perpetaro_id }} />
+      <PostBody />
       <div className="py-3 px-5">
         <PostStats {...{ liked, setOpenComments }} />
         <hr className="my-3" />
@@ -141,7 +199,7 @@ export const Post: React.FC<PostProps> = ({}) => {
         {openComments ? (
           <>
             <hr className="my-3" />
-            <PostComments />
+            <PostComments {...{ post_id }} />
           </>
         ) : null}
       </div>

@@ -1,12 +1,17 @@
 import { useLayoutEffect } from "@/src/useIsomorphicLayoutEffect";
 import React, { useRef } from "react";
 
-const dummyText: string[] = [
-  "Wow this might be the best post ever",
-  "YOLO",
-  "Flat Earth 4 EVER",
-  "FLWRE SFAIROYLI PSOFA",
-  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+const dummyComments: PostCommentProps[] = [
+  { commentor_id: "1", likes: 8, text: "Wow this might be the best post ever" },
+  { commentor_id: "2", likes: 4, text: "YOLO" },
+  { commentor_id: "3", likes: 23, text: "Flat Earth 4 EVER" },
+  { commentor_id: "4", likes: 42, text: "FLWRE SFAIROYLI PSOFA" },
+  {
+    commentor_id: "5",
+    likes: 1,
+    text:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+  },
 ];
 
 interface CommentUserInputProps {}
@@ -58,11 +63,16 @@ const CommentUserInput: React.FC<CommentUserInputProps> = () => {
 };
 
 interface PostCommentProps {
+  commentor_id: string;
   text: string;
-  likes?: string;
+  likes: number;
 }
 
-const PostComment: React.FC<PostCommentProps> = ({ text }) => {
+const PostComment: React.FC<PostCommentProps> = ({
+  commentor_id,
+  text,
+  likes,
+}) => {
   return (
     <div className="flex">
       <img
@@ -83,7 +93,7 @@ const PostComment: React.FC<PostCommentProps> = ({ text }) => {
               <div className="text-gray-600 cursor-pointer hover:text-purple-800">
                 Like
               </div>
-              <div className="ml-1 text-gray-400">4:34</div>
+              <div className="ml-2 text-gray-400">4:34</div>
             </div>
             <div className="float-right flex items-center">
               <svg
@@ -102,7 +112,7 @@ const PostComment: React.FC<PostCommentProps> = ({ text }) => {
                   fill="#5d21b6"
                 />
               </svg>
-              <div className="ml-1 text-gray-600">44</div>
+              <div className="ml-1 text-gray-600">{likes}</div>
             </div>
           </div>
         </div>
@@ -111,15 +121,17 @@ const PostComment: React.FC<PostCommentProps> = ({ text }) => {
   );
 };
 
-interface PostCommentsProps {}
+interface PostCommentsProps {
+  post_id: string;
+}
 
-export const PostComments: React.FC<PostCommentsProps> = () => {
+export const PostComments: React.FC<PostCommentsProps> = ({ post_id }) => {
   return (
     <div>
       <CommentUserInput />
       <div className="mt-3 space-y-3">
-        {dummyText.map((c) => (
-          <PostComment text={c} />
+        {dummyComments.map((c) => (
+          <PostComment {...c} />
         ))}
       </div>
     </div>
