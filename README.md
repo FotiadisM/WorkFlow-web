@@ -1,6 +1,12 @@
-# Workflow
+# Workflow-web
 
 ## Getting Started
+
+```bash
+npm install
+# or
+yarn install
+```
 
 ```bash
 npm run dev

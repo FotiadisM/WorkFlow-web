@@ -55,7 +55,7 @@ export default function Navbar({ getHeight }: NavBarProps) {
             ))}
           </div>
           <div className="flex items-center">
-            <button className="bg-purple-800 p-1 rounded-full text-gray-100 hover:text-white focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-offset-purple-100 focus:ring-white">
+            <button className="p-1 text-gray-100 bg-purple-800 rounded-full hover:text-white focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-offset-purple-100 focus:ring-white">
               <span className="sr-only">View notifications</span>
               <svg
                 xmlns="http://www.w3.org/2000/svg"

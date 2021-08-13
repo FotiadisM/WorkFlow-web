@@ -23,7 +23,7 @@ export default function Jobs() {
     <>
       <Navbar />
       <main
-        className="flex justify-center mt-24"
+        className="flex justify-center mt-10"
         style={{ minHeight: "480px" }}
       >
         <div className="px-7 border-r space-y-1">

@@ -1,23 +1,49 @@
 import { useLayoutEffect } from "@/src/useIsomorphicLayoutEffect";
-import React, { useRef } from "react";
+import { classNames } from "@/src/util";
+import React, { useEffect, useRef, useState } from "react";
 
-const dummyComments: PostCommentProps[] = [
-  { commentor_id: "1", likes: 8, text: "Wow this might be the best post ever" },
-  { commentor_id: "2", likes: 4, text: "YOLO" },
-  { commentor_id: "3", likes: 23, text: "Flat Earth 4 EVER" },
-  { commentor_id: "4", likes: 42, text: "FLWRE SFAIROYLI PSOFA" },
+const dummyComments: Comment[] = [
   {
+    comment_id: "1",
+    commentor_id: "1",
+    text: "Wow this might be the best post ever",
+    date: "14:34",
+    likes: ["1", "2", "3"],
+  },
+  {
+    comment_id: "2",
+    commentor_id: "2",
+    text: "YOLO",
+    date: "14:34",
+    likes: ["2", "3"],
+  },
+  {
+    comment_id: "3",
+    commentor_id: "3",
+    text: "Flat Earth 4 EVER",
+    date: "14:34",
+    likes: ["1", "2", "3", "4"],
+  },
+  {
+    comment_id: "4",
+    commentor_id: "4",
+    text: "FLWRE SFAIROYLI PSOFA",
+    date: "14:34",
+    likes: [],
+  },
+  {
+    comment_id: "5",
     commentor_id: "5",
-    likes: 1,
-    text:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+    date: "14:34",
+    likes: [""],
   },
 ];
 
 interface CommentUserInputProps {}
 
 const CommentUserInput: React.FC<CommentUserInputProps> = () => {
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const inputRef = useRef<HTMLTextAreaElement | null>(null);
 
   useLayoutEffect(() => {
     if (inputRef !== null) {
@@ -40,12 +66,11 @@ const CommentUserInput: React.FC<CommentUserInputProps> = () => {
         alt="profile-picture"
       />
       <form className="flex-1 flex items-center ml-3" onSubmit={onCommentPost}>
-        <input
+        <textarea
           ref={inputRef}
-          type="textarea"
           className="flex-1 px-3 py-1 mr-1 rounded-lg bg-purple-100 focus:outline-none"
           placeholder="Write a comment.."
-        />
+        ></textarea>
         <button type="submit" className="focus:outline-none">
           <span className="sr-only">Post the comment</span>
           <svg
@@ -63,16 +88,45 @@ const CommentUserInput: React.FC<CommentUserInputProps> = () => {
 };
 
 interface PostCommentProps {
+  post_id: string;
+  comment_id: string;
   commentor_id: string;
   text: string;
-  likes: number;
+  date: string;
+  likes: string[];
 }
 
 const PostComment: React.FC<PostCommentProps> = ({
+  post_id,
+  comment_id,
   commentor_id,
   text,
+  date,
   likes,
 }) => {
+  const [postLiked, setPostLiked] = useState<boolean>(false);
+  const [likesCount, setLikesCount] = useState<number>(0);
+
+  const onPostLike = () => {
+    if (postLiked) {
+      setPostLiked(false);
+      setLikesCount((o) => o - 1);
+    } else {
+      setPostLiked(true);
+      setLikesCount((o) => o + 1);
+    }
+  };
+
+  useEffect(() => {
+    const user_id = "1";
+
+    if (likes.indexOf(user_id) != -1) {
+      setPostLiked(true);
+    }
+
+    setLikesCount(likes.length);
+  }, []);
+
   return (
     <div className="flex">
       <img
@@ -90,10 +144,18 @@ const PostComment: React.FC<PostCommentProps> = ({
           </div>
           <div className="flex items-center justify-between text-sm px-3">
             <div className="flex items-center">
-              <div className="text-gray-600 cursor-pointer hover:text-purple-800">
+              <div
+                className={classNames(
+                  postLiked
+                    ? "text-purple-800 font-medium"
+                    : "text-gray-600 hover:text-purple-800",
+                  "cursor-pointer"
+                )}
+                onClick={onPostLike}
+              >
                 Like
               </div>
-              <div className="ml-2 text-gray-400">4:34</div>
+              <div className="ml-2 text-gray-400">{date}</div>
             </div>
             <div className="float-right flex items-center">
               <svg
@@ -111,7 +173,7 @@ const PostComment: React.FC<PostCommentProps> = ({
                   transform="translate(5 .97)"
                 />
               </svg>
-              <div className="ml-1 text-gray-600">{likes}</div>
+              <div className="ml-1 text-gray-600">{likesCount}</div>
             </div>
           </div>
         </div>
@@ -124,13 +186,27 @@ interface PostCommentsProps {
   post_id: string;
 }
 
+interface Comment {
+  comment_id: string;
+  commentor_id: string;
+  text: string;
+  date: string;
+  likes: string[];
+}
+
 export const PostComments: React.FC<PostCommentsProps> = ({ post_id }) => {
+  const [comments, setComments] = useState<Comment[]>([]);
+
+  useEffect(() => {
+    setComments(dummyComments);
+  }, []);
+
   return (
     <div>
       <CommentUserInput />
       <div className="mt-3 space-y-3">
-        {dummyComments.map((c) => (
-          <PostComment {...c} />
+        {comments.map((c) => (
+          <PostComment key={c.comment_id} {...{ post_id, ...c }} />
         ))}
       </div>
     </div>

@@ -128,7 +128,7 @@ const NetworkUser: React.FC<NetworkUserProps> = ({ user }) => {
           <div className="ml-2">{user.company}</div>
         </div>
       </div>
-      <button className="btn px-3 py-2 bg-purple-800 hover:bg-purple-700 active:bg-purple-900">
+      <button className="btn px-2 py-1 mr-5 bg-purple-800 hover:bg-purple-700 active:bg-purple-900">
         <span className="sr-only">Visit user's profile</span>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -147,12 +147,6 @@ const NetworkUser: React.FC<NetworkUserProps> = ({ user }) => {
 };
 
 export default function Network() {
-  const [navHeight, setNavHeight] = useState<number>(0);
-
-  const getHeight = (h: number) => {
-    setNavHeight(h);
-  };
-
   const [usersConnections, setUsersConnections] = useState<NetworkUser[]>([]);
   const [searchText, setSearchText] = useState<string>("");
   const [networkUsers, setNetworkUsers] = useState<NetworkUser[]>([]);
@@ -174,14 +168,14 @@ export default function Network() {
 
   return (
     <>
-      <Navbar getHeight={getHeight} />
+      <Navbar />
       <main
         className="relative"
-        style={{ height: `calc(100vh - ${navHeight}px)` }}
+        // style={{ height: `calc(100vh - ${navHeight}px)` }}
       >
         <div
-          className="absolute transform -translate-x-1/2 left-1/2"
-          style={{ top: "10%" }}
+          className="absolute transform -translate-x-1/2 left-1/2 mt-10"
+          // style={{ top: "10%" }}
         >
           <input
             type="text"

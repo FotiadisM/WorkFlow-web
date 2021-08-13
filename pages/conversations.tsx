@@ -30,7 +30,7 @@ export default function Conversations() {
   return (
     <>
       <Navbar />
-      <main className="flex justify-center mt-20">
+      <main className="flex justify-center mt-10">
         <div className="pr-7 border-r space-y-1">
           {users.map((u, i) => (
             <User

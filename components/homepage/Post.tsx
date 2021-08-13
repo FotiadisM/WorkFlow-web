@@ -103,16 +103,20 @@ type ftype = "post" | "share" | "like" | "comment";
 interface PostProps {
   ftype: ftype;
   post_id: string;
-  perpetaro_id: string;
+  perpetaror_id: string;
 }
 
-export const Post: React.FC<PostProps> = ({ ftype, post_id, perpetaro_id }) => {
+export const Post: React.FC<PostProps> = ({
+  ftype,
+  post_id,
+  perpetaror_id,
+}) => {
   const [liked, setLiked] = useState<boolean>(false);
   const [openComments, setOpenComments] = useState<boolean>(false);
 
   return (
     <div className="border rounded-lg shadow-lg" style={{ maxWidth: "600px" }}>
-      <PostHead {...{ ftype, perpetaro_id }} />
+      <PostHead {...{ ftype, perpetaror_id }} />
       <PostBody />
       <div className="py-3 px-5">
         <PostStats {...{ liked, setOpenComments }} />
