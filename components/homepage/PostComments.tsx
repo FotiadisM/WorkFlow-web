@@ -40,10 +40,17 @@ const dummyComments: Comment[] = [
   },
 ];
 
-interface CommentUserInputProps {}
+interface CommentUserInputProps {
+  post_id: string;
+  setComments: React.Dispatch<React.SetStateAction<Comment[]>>;
+}
 
-const CommentUserInput: React.FC<CommentUserInputProps> = () => {
+const CommentUserInput: React.FC<CommentUserInputProps> = ({
+  post_id,
+  setComments,
+}) => {
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
+  const [commentText, setCommentText] = useState<string>("");
 
   useLayoutEffect(() => {
     if (inputRef !== null) {
@@ -55,7 +62,19 @@ const CommentUserInput: React.FC<CommentUserInputProps> = () => {
 
   const onCommentPost = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("COMMENT POST");
+
+    // send request to server
+    setComments((o) => [
+      {
+        comment_id: "6",
+        commentor_id: "1",
+        text: commentText,
+        date: "16:48",
+        likes: ["1"],
+      },
+      ...o,
+    ]);
+    setCommentText("");
   };
 
   return (
@@ -68,15 +87,20 @@ const CommentUserInput: React.FC<CommentUserInputProps> = () => {
       <form className="flex-1 flex items-center ml-3" onSubmit={onCommentPost}>
         <textarea
           ref={inputRef}
+          value={commentText}
+          onChange={(e) => setCommentText(e.target.value)}
           className="flex-1 px-3 py-1 mr-1 rounded-lg bg-purple-100 focus:outline-none"
           placeholder="Write a comment.."
         ></textarea>
-        <button type="submit" className="focus:outline-none">
+        <button
+          type="submit"
+          className="focus:outline-none hover:bg-gray-200 rounded-md"
+        >
           <span className="sr-only">Post the comment</span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="currentColor"
-            className="h-7 w-7 text-purple-800"
+            className="h-10 w-10 text-purple-800"
             viewBox="0 0 16 16"
           >
             <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z" />
@@ -203,7 +227,7 @@ export const PostComments: React.FC<PostCommentsProps> = ({ post_id }) => {
 
   return (
     <div>
-      <CommentUserInput />
+      <CommentUserInput {...{ post_id, setComments }} />
       <div className="mt-3 space-y-3">
         {comments.map((c) => (
           <PostComment key={c.comment_id} {...{ post_id, ...c }} />

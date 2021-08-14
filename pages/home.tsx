@@ -5,12 +5,12 @@ import { CreatePost } from "@/components/homepage/CreatePost";
 const dummyPosts: {
   ftype: "post" | "share" | "like" | "comment";
   post_id: string;
-  perpetaro_id: string;
+  perpetaror_id: string;
 }[] = [
-  { ftype: "post", perpetaro_id: "1", post_id: "1" },
-  { ftype: "share", perpetaro_id: "2", post_id: "2" },
-  { ftype: "comment", perpetaro_id: "3", post_id: "3" },
-  { ftype: "like", perpetaro_id: "4", post_id: "4" },
+  { ftype: "post", perpetaror_id: "1", post_id: "1" },
+  { ftype: "share", perpetaror_id: "2", post_id: "2" },
+  { ftype: "comment", perpetaror_id: "3", post_id: "3" },
+  { ftype: "like", perpetaror_id: "4", post_id: "4" },
 ];
 
 export default function Home() {
