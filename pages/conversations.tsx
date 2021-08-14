@@ -1,6 +1,6 @@
 import { useState } from "react";
-import Box from "@/components/conversation/Box";
-import User from "@/components/conversation/User";
+import MessagingBox from "@/components/conversation/MessagingBox";
+import MessagingUser from "@/components/conversation/MessagingUser";
 import Navbar from "@/components/navbar/Navbar";
 
 const users: { id: string; name: string; image: string }[] = [
@@ -30,18 +30,25 @@ export default function Conversations() {
   return (
     <>
       <Navbar />
-      <main className="flex justify-center mt-10">
-        <div className="pr-7 border-r space-y-1">
-          {users.map((u, i) => (
-            <User
-              key={u.id}
-              user={u}
-              current={users[curUser].id === u.id}
-              setCurUser={() => setCurUser(i)}
-            />
-          ))}
+      <main className="flex justify-center my-10">
+        <div className="flex" style={{ width: "70vw", maxWidth: "1120px" }}>
+          <div
+            className="pr-7 border-r space-y-1"
+            style={{ flexBasis: "100%", maxWidth: "270px" }}
+          >
+            {users.map((u, i) => (
+              <MessagingUser
+                key={u.id}
+                user={u}
+                current={users[curUser].id === u.id}
+                setCurUser={() => setCurUser(i)}
+              />
+            ))}
+          </div>
+          <div style={{ flexShrink: 2 }}>
+            <MessagingBox user={users[curUser]} />
+          </div>
         </div>
-        <Box user={users[curUser]} />
       </main>
     </>
   );

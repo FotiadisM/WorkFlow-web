@@ -169,14 +169,8 @@ export default function Network() {
   return (
     <>
       <Navbar />
-      <main
-        className="relative"
-        // style={{ height: `calc(100vh - ${navHeight}px)` }}
-      >
-        <div
-          className="absolute transform -translate-x-1/2 left-1/2 mt-10"
-          // style={{ top: "10%" }}
-        >
+      <main className="flex justify-center">
+        <div className="my-10">
           <input
             type="text"
             className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10"
@@ -186,7 +180,7 @@ export default function Network() {
           />
           <div
             className="space-y-2 mt-2 overflow-y-auto"
-            style={{ width: "70vw", maxWidth: "1120px", maxHeight: "60vh" }}
+            style={{ width: "70vw", maxWidth: "1120px" }}
           >
             {networkUsers.map((u) => (
               <NetworkUser key={u.id} user={u} />

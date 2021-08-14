@@ -1,12 +1,16 @@
 import { classNames } from "@/src/util";
 
-interface UserProps {
+interface MessagingUserProps {
   user: { id: string; name: string; image: string };
   current: boolean;
   setCurUser: () => void;
 }
 
-export default function User({ user, current, setCurUser }: UserProps) {
+export default function MessagingUser({
+  user,
+  current,
+  setCurUser,
+}: MessagingUserProps) {
   return (
     <div
       className={classNames(

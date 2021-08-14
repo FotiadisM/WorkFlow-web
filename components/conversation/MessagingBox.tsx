@@ -18,16 +18,15 @@ const testMessages: Message[] = [
     convID: "1",
     userID: "2",
     timestamp: "12124512",
-    text:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.e",
+    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.e",
   },
 ];
 
-interface BoxProps {
+interface MessagingBoxProps {
   user: { id: string; name: string; image: string };
 }
 
-export default function Box({ user }: BoxProps) {
+export default function MessagingBox({ user }: MessagingBoxProps) {
   const [messages, setMessages] = useState<Message[]>(testMessages);
   const [curMsg, setCurMsg] = useState<string>("");
   const msgBox = useRef<HTMLDivElement>(null);
@@ -53,7 +52,7 @@ export default function Box({ user }: BoxProps) {
   }, [messages]);
 
   return (
-    <div className="ml-7 max-h-full" style={{ width: "50vw" }}>
+    <div className="ml-7">
       <div>
         <div className="flex items-center justify-between">
           <div className="flex items-center pb-4">
