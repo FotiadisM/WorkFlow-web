@@ -152,13 +152,6 @@ export default function Jobs() {
     switch (buttonType) {
       case "interested":
         setInterestedJobs((old) => old.filter((j) => job_id !== j.id));
-        // let tmpJobs: Job[] = [];
-        // for (let j of interestedJobs) {
-        //   if (job_id !== j.id) {
-        //     tmpJobs.push(j);
-        //   }
-        //   setInterestedJobs(tmpJobs);
-        // }
         break;
       case "edit":
         break;
