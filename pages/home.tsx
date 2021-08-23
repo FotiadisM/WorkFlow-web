@@ -1,6 +1,6 @@
 import Navbar from "@/components/navbar/Navbar";
 import { Post } from "@/components/homepage/Post";
-import { CreatePost } from "@/components/homepage/CreatePost";
+import { CreatePostArea } from "@/components/homepage/CreatePostArea";
 
 const dummyPosts: {
   ftype: "post" | "share" | "like" | "comment";
@@ -20,7 +20,7 @@ export default function Home() {
       <main className="relative">
         <div className="absolute transform -translate-x-1/2 left-1/2 mt-10">
           <div className="space-y-4 pb-14">
-            <CreatePost />
+            <CreatePostArea />
             {dummyPosts.map((p) => (
               <Post key={p.post_id} {...p} />
             ))}

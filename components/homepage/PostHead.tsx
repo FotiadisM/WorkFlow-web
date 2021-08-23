@@ -54,9 +54,9 @@ export const PostHead: React.FC<PostHeadProps> = ({ ftype, perpetaror_id }) => {
             src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
             alt="profile-picture"
           />
-          <div className="ml-3 font-semibold text-purple-700 cursor-pointer hover:underline">
+          <button className="ml-3 font-semibold text-purple-700 cursor-pointer hover:underline focus:outline-none">
             Mike Fotiadis
-          </div>
+          </button>
         </div>
         <div className="text-gray-600">12:31</div>
       </div>

@@ -49,12 +49,12 @@ const PostStats: React.FC<PostStatsProps> = ({ liked, setOpenComments }) => {
           {liked ? "You and " : ""}2.3K
         </div>
       </div>
-      <div
-        className="cursor-pointer hover:text-purple-800"
+      <button
+        className="cursor-pointer hover:text-purple-800 focus:outline-none"
         onClick={() => setOpenComments((o) => !o)}
       >
         14 Comments
-      </div>
+      </button>
     </div>
   );
 };
