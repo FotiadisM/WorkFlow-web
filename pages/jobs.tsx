@@ -1,235 +1,168 @@
-import { useEffect, useState } from "react";
-import JobOpening from "@/components/jobs/JobOpening";
+import React, { useEffect, useState } from "react";
+import JobListItem from "@/components/jobs/JobListItem";
 import Navbar from "@/components/navbar/Navbar";
+import JobCreationForm from "@/components/jobs/JobCreationForm";
 import { classNames } from "@/src/util";
+import { Job, SideBarType } from "@/src/types/job";
+import {
+  fetchAllJobs,
+  fetchUserAppliedJobs,
+  fetchUserCreatedJobs,
+  fetchUserInterestedJobs,
+} from "@/src/api/jobs";
 
-interface Job {
-  id: string;
-  user_id: string;
-  title: string;
-  type: "full_time" | "part_time" | "internship";
-  location: string;
-  company: {
-    company_id: string;
-    company_name: string;
-  };
-  salary: {
-    min: number;
-    max: number;
-  };
-  description: string;
-  skills: string[];
-}
-
-const dummyJobs: Job[] = [
-  {
-    id: "0",
-    user_id: "1",
-    title: "Job Title",
-    type: "full_time",
-    location: "Remote",
-    company: {
-      company_id: "0",
-      company_name: "Google",
-    },
-    salary: {
-      min: 40,
-      max: 80,
-    },
-    description: "Hello this is a very wonderfull description",
-    skills: ["C++", "Go", "Python", "Docker"],
-  },
-  {
-    id: "1",
-    user_id: "1",
-    title: "Job Title 2",
-    type: "full_time",
-    location: "Athens, Greece",
-    company: {
-      company_id: "0",
-      company_name: "",
-    },
-    salary: {
-      min: 40,
-      max: 80,
-    },
-    description: "",
-    skills: [],
-  },
-  {
-    id: "2",
-    user_id: "1",
-    title: "Job Title 3",
-    type: "full_time",
-    location: "",
-    company: {
-      company_id: "0",
-      company_name: "",
-    },
-    salary: {
-      min: 40,
-      max: 80,
-    },
-    description: "",
-    skills: [],
-  },
-];
-
-const dummyInterestedJobs: Job[] = [
-  {
-    id: "0",
-    user_id: "1",
-    title: "Interested Job Title",
-    type: "full_time",
-    location: "Remote",
-    company: {
-      company_id: "0",
-      company_name: "Google",
-    },
-    salary: {
-      min: 40,
-      max: 80,
-    },
-    description: "Hello this is a very wonderfull description",
-    skills: ["C++", "Go", "Python", "Docker"],
-  },
-  {
-    id: "1",
-    user_id: "1",
-    title: "Interested Job Title 2",
-    type: "full_time",
-    location: "Athens, Greece",
-    company: {
-      company_id: "0",
-      company_name: "",
-    },
-    salary: {
-      min: 40,
-      max: 80,
-    },
-    description: "",
-    skills: [],
-  },
-];
-
-const dummyUserJobs: Job[] = [
-  {
-    id: "2",
-    user_id: "1",
-    title: "User Jobs Title",
-    type: "full_time",
-    location: "",
-    company: {
-      company_id: "0",
-      company_name: "",
-    },
-    salary: {
-      min: 40,
-      max: 80,
-    },
-    description: "",
-    skills: [],
-  },
-];
-
-const sideBar: { name: string }[] = [
-  { name: "Career Opportunities " },
-  { name: "Interested in" },
-  { name: "My Job Postings" },
+const sideBar: { name: string; type: SideBarType }[] = [
+  { name: "Career Opportunities", type: SideBarType.SEARCH },
+  { name: "Interested in", type: SideBarType.INTERESTED },
+  { name: "Applied", type: SideBarType.APPLIED },
+  { name: "My Job Postings", type: SideBarType.CREATE },
 ];
 
 export default function Jobs() {
-  const [curPage, setCurPage] = useState<string>(sideBar[0].name);
-  const [currJobs, setCurrJobs] = useState<Job[]>([]);
-  const [interestedJobs, setInterestedJobs] = useState<Job[]>([]);
-  const [searchJobs, setSearchJobs] = useState<Job[]>([]);
-  const [userJobs, setUserJobs] = useState<Job[]>([]);
-
-  const onButtonPress = (
-    job_id: string,
-    buttonType: "interested" | "edit" | "default"
-  ) => {
-    switch (buttonType) {
-      case "interested":
-        setInterestedJobs((old) => old.filter((j) => job_id !== j.id));
-        break;
-      case "edit":
-        break;
-      default:
-        for (let j of searchJobs) {
-          if (job_id === j.id) {
-            setInterestedJobs((o) => [j, ...o]);
-          }
-        }
+  const [curPage, setCurPage] = useState<number>(0);
+  const changePage = (i: number) => {
+    if (sideBar[i].type == SideBarType.SEARCH) {
+      setCurPage(i);
+      setCurrJobs(jobs.all);
+    } else if (sideBar[i].type == SideBarType.INTERESTED) {
+      setCurPage(i);
+      setCurrJobs(jobs.interested);
+    } else if (sideBar[i].type == SideBarType.APPLIED) {
+      setCurPage(i);
+      setCurrJobs(jobs.applied);
+    } else {
+      setCurPage(i);
+      setCurrJobs(jobs.user);
     }
   };
+
+  const [currJobs, setCurrJobs] = useState<Job[]>([]);
+  const [jobs, setJobs] = useState<{
+    all: Job[];
+    interested: Job[];
+    applied: Job[];
+    user: Job[];
+  }>({
+    all: [],
+    interested: [],
+    applied: [],
+    user: [],
+  });
 
   useEffect(() => {
-    if (curPage === sideBar[0].name || curPage === sideBar[1].name) {
-      // fetch interested jobs
-      setInterestedJobs(dummyInterestedJobs);
+    (async function () {
+      try {
+        const [all, inte, appl, crt] = await Promise.all([
+          fetchAllJobs(),
+          fetchUserInterestedJobs(""),
+          fetchUserAppliedJobs(""),
+          fetchUserCreatedJobs(""),
+        ]);
+        setJobs({ all: all, interested: inte, applied: appl, user: crt });
+        setCurrJobs(all);
+      } catch (err) {
+        console.log(err);
+      }
+    })();
+  }, []);
+
+  const onJobButtonPress = (job: Job, action: SideBarType) => {
+    if (action === SideBarType.CREATE) {
+      setJobFormState({ open: true, mode: "edit", job: job });
+      return;
     }
 
-    if (curPage === sideBar[0].name) {
-      // fetch search jobs
-      setSearchJobs(dummyJobs);
-      setCurrJobs(dummyJobs);
-    } else if (curPage === sideBar[1].name) {
-      setCurrJobs(dummyInterestedJobs);
-    } else {
-      // fetch userJobs
-      setUserJobs(dummyUserJobs);
-      setCurrJobs(dummyUserJobs);
-    }
-  }, [curPage]);
-
-  const evaluteButtonType = (
-    job_id: string
-  ): "interested" | "edit" | "default" => {
-    if (curPage == sideBar[2].name) {
-      return "edit";
+    // remove from interested
+    if (action === SideBarType.SEARCH) {
+      setJobs((old) => {
+        old.interested.splice(old.interested.indexOf(job), 1);
+        return {
+          all: old.all,
+          interested: old.interested,
+          applied: old.applied,
+          user: old.user,
+        };
+      });
+      return;
     }
 
-    for (let j of interestedJobs) {
-      if (job_id === j.id) return "interested";
+    if (action === SideBarType.INTERESTED) {
+      setJobs((old) => ({
+        all: old.all,
+        interested: [...old.interested, job],
+        applied: old.applied,
+        user: old.user,
+      }));
+      return;
     }
-
-    return "default";
   };
+
+  const [jobFormState, setJobFormState] = useState<{
+    open: boolean;
+    mode: "create" | "edit";
+    job: Job | null;
+  }>({
+    open: false,
+    mode: "create",
+    job: null,
+  });
 
   return (
     <>
       <Navbar />
-      <main className="flex justify-center mt-10">
-        <div className="px-7 border-r space-y-1">
-          {sideBar.map((i) => (
-            <h1
-              key={i.name}
+      <main className="flex justify-center py-10 px-44">
+        <div className="px-7 border-r space-y-1 flex flex-col">
+          {sideBar.map((s, i) => (
+            <button
+              key={s.type}
               className={classNames(
-                curPage === i.name
+                sideBar[curPage].type === sideBar[i].type
                   ? " bg-gray-200 text-purple-800"
                   : "text-gray-800 hover:bg-gray-100",
-                "text-lg rounded-md px-2 py-3 cursor-pointer"
+                "text-lg rounded-md px-2 py-3 cursor-pointer focus:outline-none"
               )}
-              onClick={() => setCurPage(i.name)}
+              onClick={() => changePage(i)}
             >
-              {i.name}
-            </h1>
+              {s.name}
+            </button>
           ))}
         </div>
-        <div className="pl-20">
-          <h1 className="text-4xl font-semibold">{curPage}</h1>
+        <div className="pl-20 flex-1">
+          <div className="flex justify-between">
+            <h1 className="text-4xl font-semibold">{sideBar[curPage].name}</h1>
+            <button
+              className={classNames(
+                sideBar[curPage].type === SideBarType.CREATE ? "" : "invisible",
+                "btn bg-purple-800 text-white rounded-md py-2 px-3 hover:bg-purple-900 flex justify-center items-center"
+              )}
+              onClick={() =>
+                setJobFormState({ open: true, mode: "create", job: null })
+              }
+            >
+              <div className="mr-2">Create new</div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                viewBox="0 0 16 16"
+              >
+                <path d="M8 0a1 1 0 0 1 1 1v6h6a1 1 0 1 1 0 2H9v6a1 1 0 1 1-2 0V9H1a1 1 0 0 1 0-2h6V1a1 1 0 0 1 1-1z" />
+              </svg>
+            </button>
+          </div>
           <hr className="mt-2 mb-4 border shadow-md" />
           <div className="space-y-1">
             {currJobs.map((j, i) => {
               return (
                 <>
                   {i !== 0 ? <hr /> : null}
-                  <JobOpening
+                  <JobListItem
                     key={j.id}
-                    job={j}
-                    onButtonPress={onButtonPress}
-                    buttonType={evaluteButtonType(j.id)}
+                    currJob={j}
+                    jobs={jobs}
+                    currPage={sideBar[curPage]}
+                    onJobButtonPress={onJobButtonPress}
                   />
                 </>
               );
@@ -237,6 +170,8 @@ export default function Jobs() {
           </div>
         </div>
       </main>
+
+      <JobCreationForm {...{ jobFormState, setJobFormState }} />
     </>
   );
 }

@@ -37,10 +37,11 @@ const List: React.FC<ListProps> = ({ selected, setSelected }) => {
           leaveTo="opacity-0"
         >
           <Listbox.Options className="absolute w-full overflow-auto text-base py-1 mt-1 bg-white rounded-lg shadow-md ring-1 ring-black ring-opacity-5 focus:outline-none">
-            {publishOptions.map((o, i) => (
-              <Listbox.Option key={i} value={o} as={Fragment}>
-                {({ active, selected }) => (
+            {publishOptions.map((o) => (
+              <Listbox.Option key={o} value={o} as={Fragment}>
+                {({ active }) => (
                   <li
+                    key={o}
                     className={classNames(
                       active ? "bg-purple-100" : "",
                       "cursor-default truncate px-2 py-1 flex"
@@ -81,7 +82,7 @@ const FilesPreviewer: React.FC<FilesPreviewerProps> = ({ files, setFiles }) => {
       {files.map((f, i) => {
         if (f.type.match("image.*")) {
           return (
-            <div className="relative rounded-lg">
+            <div key={i} className="relative rounded-lg">
               <img
                 key={i}
                 src={URL.createObjectURL(f)}
@@ -105,7 +106,7 @@ const FilesPreviewer: React.FC<FilesPreviewerProps> = ({ files, setFiles }) => {
           );
         } else if (f.type.match("video.*")) {
           return (
-            <div className="relative rounded-lg">
+            <div key={i} className="relative rounded-lg">
               <video
                 width="100%"
                 src={URL.createObjectURL(f)}
@@ -129,6 +130,7 @@ const FilesPreviewer: React.FC<FilesPreviewerProps> = ({ files, setFiles }) => {
             </div>
           );
         }
+
         return null;
       })}
     </div>
@@ -214,6 +216,7 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
                       id="filesInput"
                       type="file"
                       className="hidden"
+                      accept="image/*,video/*"
                       multiple
                       onChange={(e) => {
                         onFileChange(e);
