@@ -76,22 +76,15 @@ export default function Jobs() {
     if (action === SideBarType.SEARCH) {
       setJobs((old) => {
         old.interested.splice(old.interested.indexOf(job), 1);
-        return {
-          all: old.all,
-          interested: old.interested,
-          applied: old.applied,
-          user: old.user,
-        };
+        return { ...old };
       });
       return;
     }
 
     if (action === SideBarType.INTERESTED) {
       setJobs((old) => ({
-        all: old.all,
+        ...old,
         interested: [...old.interested, job],
-        applied: old.applied,
-        user: old.user,
       }));
       return;
     }
@@ -106,6 +99,17 @@ export default function Jobs() {
     mode: "create",
     job: null,
   });
+
+  const onJobEdit = (j: Job) => {};
+
+  const onJobCreate = (j: Job) => {
+    j.id = "8";
+    setJobFormState({ open: false, mode: "create", job: null });
+    setJobs((o) => {
+      setCurrJobs([...o.user, j]);
+      return { ...o, all: [...o.all, j], user: [...o.user, j] };
+    });
+  };
 
   return (
     <>
@@ -171,7 +175,9 @@ export default function Jobs() {
         </div>
       </main>
 
-      <JobCreationForm {...{ jobFormState, setJobFormState }} />
+      <JobCreationForm
+        {...{ jobFormState, setJobFormState, onJobEdit, onJobCreate }}
+      />
     </>
   );
 }

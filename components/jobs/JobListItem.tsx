@@ -129,7 +129,7 @@ export default function JobListItem({
 
   return (
     <div style={{ minWidth: "900px" }}>
-      <div className="flex justify-between items-center space-x-44 p-2">
+      <div className="flex justify-between items-center p-2">
         <div>
           <h2 className="text-2xl font-bold leading-7 text-gray-900 mb-2">
             {currJob.title}
