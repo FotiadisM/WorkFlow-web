@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction, useState } from "react";
+import { useAuth } from "../auth/AuthRoute";
 import { CreatePostModal } from "./CreatePostModal";
 
 interface CreateButtonsProps {
@@ -25,6 +26,7 @@ const CreateButtons: React.FC<CreateButtonsProps> = ({
 interface CreatePostAreaProps {}
 
 export const CreatePostArea: React.FC<CreatePostAreaProps> = () => {
+  const auth = useAuth();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   return (
@@ -39,7 +41,7 @@ export const CreatePostArea: React.FC<CreatePostAreaProps> = () => {
           <form className="flex-1 ml-4" onClick={() => setIsModalOpen(true)}>
             <textarea
               className="w-full px-4 py-1 rounded-xl bg-gray-100 focus:outline-none"
-              placeholder="What's on your mind, Mike?"
+              placeholder={`What's on your mind, ${auth?.user?.f_name}?`}
             />
           </form>
         </div>

@@ -10,6 +10,7 @@ import {
   fetchUserCreatedJobs,
   fetchUserInterestedJobs,
 } from "@/src/api/jobs";
+import { AuthRoute } from "@/components/auth/AuthRoute";
 
 const sideBar: { name: string; type: SideBarType }[] = [
   { name: "Career Opportunities", type: SideBarType.SEARCH },
@@ -112,7 +113,7 @@ export default function Jobs() {
   };
 
   return (
-    <>
+    <AuthRoute>
       <Navbar />
       <main className="flex justify-center py-10 px-44">
         <div className="px-7 border-r space-y-1 flex flex-col">
@@ -178,6 +179,6 @@ export default function Jobs() {
       <JobCreationForm
         {...{ jobFormState, setJobFormState, onJobEdit, onJobCreate }}
       />
-    </>
+    </AuthRoute>
   );
 }

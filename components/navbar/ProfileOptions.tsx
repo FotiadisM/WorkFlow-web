@@ -1,15 +1,13 @@
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
-import Link from "next/link";
 import { classNames } from "@/src/util";
-
-const profileOptions: { name: string; href: string }[] = [
-  { name: "Your Profile", href: "#" },
-  { name: "Settings", href: "#" },
-  { name: "Sign out", href: "/" },
-];
+import { useRouter } from "next/router";
+import { useAuth } from "../auth/AuthRoute";
 
 export const ProfileOptions: React.FC = () => {
+  const router = useRouter();
+  const auth = useAuth();
+
   return (
     <Menu as="div" className="ml-5">
       {({ open }) => (
@@ -36,22 +34,51 @@ export const ProfileOptions: React.FC = () => {
               static
               className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10"
             >
-              {profileOptions.map((p) => (
-                <Menu.Item key={p.name}>
-                  {({ active }) => (
-                    <Link href={p.href}>
-                      <a
-                        className={classNames(
-                          active ? "bg-gray-100" : "",
-                          "block px-4 py-2 text-sm text-gray-700 hover:bg-purple-800 hover:text-white"
-                        )}
-                      >
-                        {p.name}
-                      </a>
-                    </Link>
-                  )}
-                </Menu.Item>
-              ))}
+              <Menu.Item>
+                {({ active }) => (
+                  <div
+                    className={classNames(
+                      active ? "bg-gray-100" : "",
+                      "block px-4 py-2 text-sm text-gray-700 hover:bg-purple-800 hover:text-white"
+                    )}
+                    onClick={() => {
+                      router.push(`/user/${auth?.user?.id}`);
+                    }}
+                  >
+                    Profile
+                  </div>
+                )}
+              </Menu.Item>
+              <Menu.Item>
+                {({ active }) => (
+                  <div
+                    className={classNames(
+                      active ? "bg-gray-100" : "",
+                      "block px-4 py-2 text-sm text-gray-700 hover:bg-purple-800 hover:text-white"
+                    )}
+                    onClick={() => {
+                      router.push("/settings");
+                    }}
+                  >
+                    Settings
+                  </div>
+                )}
+              </Menu.Item>
+              <Menu.Item>
+                {({ active }) => (
+                  <div
+                    className={classNames(
+                      active ? "bg-gray-100" : "",
+                      "block px-4 py-2 text-sm text-gray-700 hover:bg-purple-800 hover:text-white"
+                    )}
+                    onClick={() => {
+                      auth?.signOut();
+                    }}
+                  >
+                    Sign Out
+                  </div>
+                )}
+              </Menu.Item>
             </Menu.Items>
           </Transition>
         </>

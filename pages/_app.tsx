@@ -1,3 +1,4 @@
+import { ProvideAuth } from "@/components/auth/AuthRoute";
 import { AppProps } from "next/app";
 import Head from "next/head";
 
@@ -6,7 +7,7 @@ import "../styles/globals.css";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <>
+    <ProvideAuth>
       <Head>
         <title>Workflow</title>
         <link rel="icon" href="/favicon.ico" />
@@ -19,7 +20,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
 
       <Component {...pageProps} />
-    </>
+    </ProvideAuth>
   );
 }
 

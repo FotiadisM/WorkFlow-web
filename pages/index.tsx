@@ -1,3 +1,4 @@
+import { useAuth } from "@/components/auth/AuthRoute";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
@@ -40,10 +41,14 @@ function Navbar() {
 
 export default function LandingPage() {
   const router = useRouter();
+  const auth = useAuth();
 
   const onSignIn = (e: React.FormEvent) => {
     e.preventDefault();
-    router.push("/home");
+    if (auth !== null) {
+      auth.signIn("asdf", "asd");
+      router.push("/home");
+    }
   };
 
   return (

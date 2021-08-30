@@ -2,6 +2,7 @@ import { useState } from "react";
 import MessagingBox from "@/components/conversation/MessagingBox";
 import MessagingUser from "@/components/conversation/MessagingUser";
 import Navbar from "@/components/navbar/Navbar";
+import { AuthRoute } from "@/components/auth/AuthRoute";
 
 const users: { id: string; name: string; image: string }[] = [
   {
@@ -28,7 +29,7 @@ export default function Conversations() {
   const [curUser, setCurUser] = useState<number>(0);
 
   return (
-    <>
+    <AuthRoute>
       <Navbar />
       <main className="flex justify-center my-10">
         <div className="flex" style={{ width: "70vw", maxWidth: "1120px" }}>
@@ -50,6 +51,6 @@ export default function Conversations() {
           </div>
         </div>
       </main>
-    </>
+    </AuthRoute>
   );
 }

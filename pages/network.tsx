@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import Navbar from "@/components/navbar/Navbar";
+import { useRouter } from "next/router";
+import { AuthRoute } from "@/components/auth/AuthRoute";
 
 const mockNetworkUsers: NetworkUser[] = [
   {
@@ -90,6 +92,8 @@ interface NetworkUserProps {
 }
 
 const NetworkUser: React.FC<NetworkUserProps> = ({ user }) => {
+  const router = useRouter();
+
   return (
     <div className="flex items-center justify-between px-3 py-2 border rounded-lg">
       <div className="flex items-center space-x-8 ml-5">
@@ -128,7 +132,12 @@ const NetworkUser: React.FC<NetworkUserProps> = ({ user }) => {
           <div className="ml-2">{user.company}</div>
         </div>
       </div>
-      <button className="btn px-2 py-1 mr-5 bg-purple-800 hover:bg-purple-700 active:bg-purple-900">
+      <button
+        className="btn px-2 py-1 mr-5 bg-purple-800 hover:bg-purple-700 active:bg-purple-900"
+        onClick={() => {
+          router.push(`/user/${user.id}`);
+        }}
+      >
         <span className="sr-only">Visit user's profile</span>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -167,7 +176,7 @@ export default function Network() {
   }, []);
 
   return (
-    <>
+    <AuthRoute>
       <Navbar />
       <main className="flex justify-center">
         <div className="my-10">
@@ -188,6 +197,6 @@ export default function Network() {
           </div>
         </div>
       </main>
-    </>
+    </AuthRoute>
   );
 }

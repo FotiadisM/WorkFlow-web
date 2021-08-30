@@ -1,6 +1,7 @@
 import Navbar from "@/components/navbar/Navbar";
 import { Post } from "@/components/homepage/Post";
 import { CreatePostArea } from "@/components/homepage/CreatePostArea";
+import { AuthRoute } from "@/components/auth/AuthRoute";
 
 const dummyPosts: {
   ftype: "post" | "share" | "like" | "comment";
@@ -15,7 +16,7 @@ const dummyPosts: {
 
 export default function Home() {
   return (
-    <>
+    <AuthRoute>
       <Navbar />
       <main className="relative">
         <div className="absolute transform -translate-x-1/2 left-1/2 mt-10">
@@ -27,6 +28,6 @@ export default function Home() {
           </div>
         </div>
       </main>
-    </>
+    </AuthRoute>
   );
 }
