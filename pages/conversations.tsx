@@ -31,7 +31,7 @@ export default function Conversations() {
   return (
     <AuthRoute>
       <Navbar />
-      <main className="flex justify-center my-10">
+      <main className="flex justify-center py-10">
         <div className="flex" style={{ width: "70vw", maxWidth: "1120px" }}>
           <div
             className="pr-7 border-r space-y-1"

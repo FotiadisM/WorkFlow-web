@@ -3,6 +3,7 @@ import { Menu, Transition } from "@headlessui/react";
 import { classNames } from "@/src/util";
 import { useRouter } from "next/router";
 import { useAuth } from "../auth/AuthRoute";
+import { serverURI } from "@/src/api/url";
 
 export const ProfileOptions: React.FC = () => {
   const router = useRouter();
@@ -16,7 +17,7 @@ export const ProfileOptions: React.FC = () => {
             <span className="sr-only">Open user menu</span>
             <img
               className="h-8 w-8 rounded-full"
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+              src={serverURI + "/static/" + auth?.user?.profile_pic}
               alt="profile-picture"
             />
           </Menu.Button>

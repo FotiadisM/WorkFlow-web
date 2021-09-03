@@ -1,12 +1,7 @@
-export async function fetcher<T>(
-  url: string,
-  access_token: string
-): Promise<T> {
-  const http = "http";
-  const host = "localhost";
-  const port = "9090";
+import { serverURI } from "./url";
 
-  const res = await fetch(http + "://" + host + ":" + port + url, {
+export async function fetcher<T>(access_token: string): Promise<T> {
+  const res = await fetch(serverURI, {
     headers: {
       "Content-Type": "application/json",
       Authorization: "Bearer " + access_token,

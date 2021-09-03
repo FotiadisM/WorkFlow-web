@@ -1,3 +1,4 @@
+import { serverURI } from "@/src/api/url";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useAuth } from "../auth/AuthRoute";
 import { CreatePostModal } from "./CreatePostModal";
@@ -35,7 +36,7 @@ export const CreatePostArea: React.FC<CreatePostAreaProps> = () => {
         <div className="flex items-start">
           <img
             className="h-10 w-10 rounded-full"
-            src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+            src={serverURI + "/static/" + auth?.user?.profile_pic}
             alt="profile-picture"
           />
           <form className="flex-1 ml-4" onClick={() => setIsModalOpen(true)}>

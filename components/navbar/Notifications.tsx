@@ -83,7 +83,7 @@ export const Notifications: React.FC<NotificationsProps> = () => {
                     <div className="ml-2 px-3">
                       <h4 className="text-sm">
                         {n.type === "friend-request"
-                          ? "Friend Request from"
+                          ? "Connection Request from"
                           : "wtf?"}
                         <br />
                         Mike Fotiadis

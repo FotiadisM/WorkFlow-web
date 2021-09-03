@@ -61,7 +61,7 @@ export default function Settings() {
               }}
             >
               <div>
-                <label className="block text-xl text-gray-800">
+                <label className="block text-xl text-gray-500">
                   First name:
                 </label>
                 <input
@@ -74,7 +74,7 @@ export default function Settings() {
                 />
               </div>
               <div>
-                <label className="block text-xl text-gray-800">
+                <label className="block text-xl text-gray-500">
                   Last name:
                 </label>
                 <input
@@ -87,7 +87,7 @@ export default function Settings() {
                 />
               </div>
               <div>
-                <label className="block text-xl text-gray-800">Email:</label>
+                <label className="block text-xl text-gray-500">Email:</label>
                 <input
                   type="email"
                   className="py-2 px-3 w-full border rounded-md"
@@ -98,7 +98,7 @@ export default function Settings() {
                 />
               </div>
               <div>
-                <label className="block text-xl text-gray-800">Company:</label>
+                <label className="block text-xl text-gray-500">Company:</label>
                 <input
                   type="text"
                   className="py-2 px-3 w-full border rounded-md"
@@ -109,7 +109,7 @@ export default function Settings() {
                 />
               </div>
               <div>
-                <label className="block text-xl text-gray-800">Position</label>
+                <label className="block text-xl text-gray-500">Position</label>
                 <input
                   type="text"
                   className="py-2 px-3 w-full border rounded-md"
@@ -120,18 +120,20 @@ export default function Settings() {
                 />
               </div>
               <div>
-                <label className="block text-xl text-gray-800">
+                <label className="block text-xl text-gray-500">
                   Profile picture:
                 </label>
                 <input
                   type="file"
+                  accept="image/*"
                   className="py-2 px-3 w-full border rounded-md"
                 />
               </div>
               <div>
-                <label className="block text-xl text-gray-800">Resume:</label>
+                <label className="block text-xl text-gray-500">Resume:</label>
                 <input
                   type="file"
+                  accept=".pdf"
                   className="py-2 px-3 w-full border rounded-md"
                 />
               </div>

@@ -1,6 +1,8 @@
+import { serverURI } from "@/src/api/url";
 import { classNames } from "@/src/util";
 import { Dialog, Listbox, Transition } from "@headlessui/react";
 import React, { Dispatch, Fragment, SetStateAction, useState } from "react";
+import { useAuth } from "../auth/AuthRoute";
 
 const publishOptions: string[] = ["Only you", "Only friends", "All"];
 
@@ -146,6 +148,7 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
   isModalOpen,
   setIsModalOpen,
 }) => {
+  const auth = useAuth();
   const [selected, setSelected] = useState<string>(publishOptions[1]);
 
   const onFilesButtonClick = () => {
@@ -248,7 +251,7 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
                 <div className="flex mt-4">
                   <img
                     className="h-12 w-12 rounded-full"
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                    src={serverURI + "/static/" + auth?.user?.profile_pic}
                     alt="profile-picture"
                   />
                   <div className="flex-1 ml-4">

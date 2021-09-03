@@ -1,19 +1,26 @@
+import { useAuth } from "@/components/auth/AuthRoute";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 
 export default function SignIn() {
   const router = useRouter();
+  const auth = useAuth();
+
   const [signUpInfo, setSignUpInfo] = useState<{
     first_name: string;
     last_name: string;
     email: string;
+    company: string;
+    position: string;
     password: string;
     password_repeat: string;
-    profile: FileList | null;
+    profile: File | null;
   }>({
     first_name: "",
     last_name: "",
     email: "",
+    company: "",
+    position: "",
     password: "",
     password_repeat: "",
     profile: null,
@@ -21,7 +28,32 @@ export default function SignIn() {
 
   const onSignUp = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(signUpInfo.profile);
+
+    if (signUpInfo.password !== signUpInfo.password_repeat) {
+      window.alert("Passwords don't match");
+      setSignUpInfo((o) => ({ ...o, password: "", password_repeat: "" }));
+      return;
+    }
+
+    if (signUpInfo.profile !== null) {
+      auth
+        ?.signUp(
+          signUpInfo.first_name,
+          signUpInfo.last_name,
+          signUpInfo.email,
+          signUpInfo.company,
+          signUpInfo.position,
+          signUpInfo.password,
+          signUpInfo.profile
+        )
+        .then((v) => {
+          if (v !== null) {
+            window.alert(v);
+          }
+          router.push("/home");
+        })
+        .catch((err) => console.log(err));
+    }
   };
 
   return (
@@ -106,6 +138,40 @@ export default function SignIn() {
           />
         </div>
         <div>
+          <label htmlFor="company" className="sr-only">
+            Company name
+          </label>
+          <input
+            id="company"
+            name="company"
+            type="text"
+            required
+            className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10"
+            placeholder="Company name"
+            value={signUpInfo.company}
+            onChange={(e) => {
+              setSignUpInfo((o) => ({ ...o, company: e.target.value }));
+            }}
+          />
+        </div>
+        <div>
+          <label htmlFor="position" className="sr-only">
+            Position name
+          </label>
+          <input
+            id="position"
+            name="position"
+            type="text"
+            required
+            className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10"
+            placeholder="Position name"
+            value={signUpInfo.position}
+            onChange={(e) => {
+              setSignUpInfo((o) => ({ ...o, position: e.target.value }));
+            }}
+          />
+        </div>
+        <div>
           <label htmlFor="password" className="sr-only">
             New Password
           </label>
@@ -159,7 +225,7 @@ export default function SignIn() {
             onChange={(e) => {
               setSignUpInfo((o) => ({
                 ...o,
-                profile: e.target.files,
+                profile: e.target.files !== null ? e.target.files[0] : null,
               }));
             }}
           />

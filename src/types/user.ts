@@ -5,5 +5,6 @@ export interface User {
   email: string;
   company: string;
   position: string;
+  profile_pic: string;
   role: "admin" | "normal";
 }
