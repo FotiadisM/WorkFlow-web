@@ -1,54 +1,22 @@
+import { serverURI } from "@/src/api/url";
+import { Post, Comment } from "@/src/types/posts";
 import { useLayoutEffect } from "@/src/useIsomorphicLayoutEffect";
 import { classNames } from "@/src/util";
-import React, { useEffect, useRef, useState } from "react";
-
-const dummyComments: Comment[] = [
-  {
-    comment_id: "1",
-    commentor_id: "1",
-    text: "Wow this might be the best post ever",
-    date: "14:34",
-    likes: ["1", "2", "3"],
-  },
-  {
-    comment_id: "2",
-    commentor_id: "2",
-    text: "YOLO",
-    date: "14:34",
-    likes: ["2", "3"],
-  },
-  {
-    comment_id: "3",
-    commentor_id: "3",
-    text: "Flat Earth 4 EVER",
-    date: "14:34",
-    likes: ["1", "2", "3", "4"],
-  },
-  {
-    comment_id: "4",
-    commentor_id: "4",
-    text: "FLWRE SFAIROYLI PSOFA",
-    date: "14:34",
-    likes: [],
-  },
-  {
-    comment_id: "5",
-    commentor_id: "5",
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
-    date: "14:34",
-    likes: [""],
-  },
-];
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { useAuth } from "../auth/AuthRoute";
 
 interface CommentUserInputProps {
-  post_id: string;
-  setComments: React.Dispatch<React.SetStateAction<Comment[]>>;
+  onComment: (text: string) => void;
 }
 
-const CommentUserInput: React.FC<CommentUserInputProps> = ({
-  post_id,
-  setComments,
-}) => {
+const CommentUserInput: React.FC<CommentUserInputProps> = ({ onComment }) => {
+  const auth = useAuth();
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
   const [commentText, setCommentText] = useState<string>("");
 
@@ -60,20 +28,9 @@ const CommentUserInput: React.FC<CommentUserInputProps> = ({
     }
   }, []);
 
-  const onCommentPost = (e: React.FormEvent) => {
+  const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    // send request to server
-    setComments((o) => [
-      {
-        comment_id: "6",
-        commentor_id: "1",
-        text: commentText,
-        date: "16:48",
-        likes: ["1"],
-      },
-      ...o,
-    ]);
+    onComment(commentText);
     setCommentText("");
   };
 
@@ -81,10 +38,10 @@ const CommentUserInput: React.FC<CommentUserInputProps> = ({
     <div className="flex item-center">
       <img
         className="h-8 w-8 rounded-full"
-        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+        src={serverURI + "/static/" + auth?.user?.profile_pic}
         alt="profile-picture"
       />
-      <form className="flex-1 flex items-center ml-3" onSubmit={onCommentPost}>
+      <form className="flex-1 flex items-center ml-3" onSubmit={onSubmit}>
         <textarea
           ref={inputRef}
           value={commentText}
@@ -112,44 +69,33 @@ const CommentUserInput: React.FC<CommentUserInputProps> = ({
 };
 
 interface PostCommentProps {
-  post_id: string;
   comment_id: string;
-  commentor_id: string;
-  text: string;
-  date: string;
-  likes: string[];
 }
 
-const PostComment: React.FC<PostCommentProps> = ({
-  post_id,
-  comment_id,
-  commentor_id,
-  text,
-  date,
-  likes,
-}) => {
-  const [postLiked, setPostLiked] = useState<boolean>(false);
-  const [likesCount, setLikesCount] = useState<number>(0);
-
-  const onPostLike = () => {
-    if (postLiked) {
-      setPostLiked(false);
-      setLikesCount((o) => o - 1);
-    } else {
-      setPostLiked(true);
-      setLikesCount((o) => o + 1);
-    }
-  };
+const PostComment: React.FC<PostCommentProps> = ({ comment_id }) => {
+  const [liked, setLiked] = useState<boolean>(false);
+  const [comment, setComment] = useState<Comment | null>(null);
 
   useEffect(() => {
-    const user_id = "1";
+    const c: Comment = {
+      id: "123",
+      user_id: "1234",
+      text: "That's a comment right there",
+      created: "12:43",
+      likes: [],
+    };
+    // TODO: if user_id in likes, setLiked(true)
+    setComment(c);
+  }, [comment_id]);
 
-    if (likes.indexOf(user_id) != -1) {
-      setPostLiked(true);
-    }
+  const onCommentLike = () => {
+    // TODO: toogleCommentLike
+    setLiked((l) => !l);
+  };
 
-    setLikesCount(likes.length);
-  }, []);
+  if (comment == null) {
+    return null;
+  }
 
   return (
     <div className="flex">
@@ -164,22 +110,22 @@ const PostComment: React.FC<PostCommentProps> = ({
             <div className="font-semibold text-purple-500 hover:underline cursor-pointer">
               Tatas Michalis
             </div>
-            <div className="text-gray-700">{text}</div>
+            <div className="text-gray-700">{comment.text}</div>
           </div>
           <div className="flex items-center justify-between text-sm px-3">
             <div className="flex items-center">
               <div
                 className={classNames(
-                  postLiked
+                  liked
                     ? "text-purple-800 font-medium"
                     : "text-gray-600 hover:text-purple-800",
                   "cursor-pointer"
                 )}
-                onClick={onPostLike}
+                onClick={onCommentLike}
               >
                 Like
               </div>
-              <div className="ml-2 text-gray-400">{date}</div>
+              <div className="ml-2 text-gray-400">{comment.created}</div>
             </div>
             <div className="float-right flex items-center">
               <svg
@@ -197,7 +143,7 @@ const PostComment: React.FC<PostCommentProps> = ({
                   transform="translate(5 .97)"
                 />
               </svg>
-              <div className="ml-1 text-gray-600">{likesCount}</div>
+              <div className="ml-1 text-gray-600">{comment.likes.length}</div>
             </div>
           </div>
         </div>
@@ -207,30 +153,24 @@ const PostComment: React.FC<PostCommentProps> = ({
 };
 
 interface PostCommentsProps {
-  post_id: string;
+  comments: string[];
+  setPost: Dispatch<SetStateAction<Post | null>>;
 }
 
-interface Comment {
-  comment_id: string;
-  commentor_id: string;
-  text: string;
-  date: string;
-  likes: string[];
-}
-
-export const PostComments: React.FC<PostCommentsProps> = ({ post_id }) => {
-  const [comments, setComments] = useState<Comment[]>([]);
-
-  useEffect(() => {
-    setComments(dummyComments);
-  }, []);
+export const PostComments: React.FC<PostCommentsProps> = ({
+  comments,
+  setPost,
+}) => {
+  const onComment = (text: string) => {
+    // TODO: post comment to server
+  };
 
   return (
     <div>
-      <CommentUserInput {...{ post_id, setComments }} />
+      <CommentUserInput onComment={onComment} />
       <div className="mt-3 space-y-3">
         {comments.map((c) => (
-          <PostComment key={c.comment_id} {...{ post_id, ...c }} />
+          <PostComment key={c} comment_id={c} />
         ))}
       </div>
     </div>

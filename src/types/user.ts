@@ -6,5 +6,5 @@ export interface User {
   company: string;
   position: string;
   profile_pic: string;
-  role: "admin" | "normal";
+  role?: "admin" | "normal";
 }

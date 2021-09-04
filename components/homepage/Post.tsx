@@ -1,32 +1,36 @@
+import { fetchPost } from "@/src/api/posts";
+import { Feed, Post as hPost } from "@/src/types/posts";
 import { classNames } from "@/src/util";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useAuth } from "../auth/AuthRoute";
 import { PostComments } from "./PostComments";
 import { PostHead } from "./PostHead";
 
-interface PostBodyProps {}
+interface PostBodyProps {
+  text: string;
+  images: string[];
+  videos: string[];
+}
 
-const PostBody: React.FC<PostBodyProps> = () => {
+const PostBody: React.FC<PostBodyProps> = ({ text, images, videos }) => {
   return (
     <div className="px-3 pb-1">
-      <div className="mx-2 mt-2 text-gray-800">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-        occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-        mollit anim id est laborum.e
-      </div>
+      <div className="mx-2 mt-2 text-gray-800">{text}</div>
     </div>
   );
 };
 
 interface PostStatsProps {
   liked: boolean;
+  likesNum: number;
   setOpenComments: Dispatch<SetStateAction<boolean>>;
 }
 
-const PostStats: React.FC<PostStatsProps> = ({ liked, setOpenComments }) => {
+const PostStats: React.FC<PostStatsProps> = ({
+  liked,
+  likesNum,
+  setOpenComments,
+}) => {
   return (
     <div className="flex items-center justify-between text-gray-600">
       <div className="flex items-center">
@@ -46,7 +50,8 @@ const PostStats: React.FC<PostStatsProps> = ({ liked, setOpenComments }) => {
           />
         </svg>
         <div className={classNames(liked ? "text-purple-800" : "", "ml-2")}>
-          {liked ? "You and " : ""}2.3K
+          {liked ? "You and " : ""}
+          {likesNum}
         </div>
       </div>
       <button
@@ -61,19 +66,15 @@ const PostStats: React.FC<PostStatsProps> = ({ liked, setOpenComments }) => {
 
 interface PostActionsProps {
   liked: boolean;
-  setLiked: Dispatch<SetStateAction<boolean>>;
+  onToggleLike: () => void;
   setOpenComments: Dispatch<SetStateAction<boolean>>;
 }
 
 const PostActions: React.FC<PostActionsProps> = ({
   liked,
-  setLiked,
+  onToggleLike,
   setOpenComments,
 }) => {
-  const onLikeButton = () => {
-    setLiked((o) => !o);
-  };
-
   return (
     <div className="flex items-center justify-between">
       <button
@@ -81,7 +82,7 @@ const PostActions: React.FC<PostActionsProps> = ({
           liked ? "font-semibold text-purple-700 bg-gray-100" : "",
           "flex-1 btn py-2 text-purple-800 hover:bg-gray-200"
         )}
-        onClick={onLikeButton}
+        onClick={onToggleLike}
       >
         Like
       </button>
@@ -98,34 +99,61 @@ const PostActions: React.FC<PostActionsProps> = ({
   );
 };
 
-type ftype = "post" | "share" | "like" | "comment";
-
 interface PostProps {
-  ftype: ftype;
-  post_id: string;
-  perpetaror_id: string;
+  feed: Feed;
 }
 
-export const Post: React.FC<PostProps> = ({
-  ftype,
-  post_id,
-  perpetaror_id,
-}) => {
+export const Post: React.FC<PostProps> = ({ feed }) => {
+  const auth = useAuth();
+  const [post, setPost] = useState<hPost | null>(null);
   const [liked, setLiked] = useState<boolean>(false);
+
+  useEffect(() => {
+    fetchPost(feed.post_id).then((p) => {
+      if (p !== null) {
+        if (auth !== null)
+          if (auth.user !== null)
+            if (p?.likes.indexOf(auth.user.id) !== -1) setLiked(true);
+        setPost(p);
+      }
+    });
+  }, [feed.post_id]);
+
+  const onToggleLike = () => {
+    // TODO: post toggle like
+    setLiked((l) => !l);
+  };
+
   const [openComments, setOpenComments] = useState<boolean>(false);
 
+  if (post === null) {
+    return null;
+  }
+
   return (
-    <div className="border rounded-lg shadow-lg" style={{ maxWidth: "600px" }}>
-      <PostHead {...{ ftype, perpetaror_id }} />
-      <PostBody />
+    <div className="border rounded-lg shadow-lg" style={{ width: "600px" }}>
+      <PostHead
+        user_id={post.user_id}
+        type={feed.type}
+        perpetaror_id={feed.perpetrator_id}
+        created={post.created}
+      />
+      <PostBody text={post.text} images={post.images} videos={post.videos} />
       <div className="py-3 px-5">
-        <PostStats {...{ liked, setOpenComments }} />
+        <PostStats
+          {...{ liked, setOpenComments }}
+          likesNum={post.likes.length}
+        />
         <hr className="my-3" />
-        <PostActions {...{ liked, setLiked, setOpenComments }} />
+        <PostActions
+          liked={liked}
+          onToggleLike={onToggleLike}
+          setOpenComments={setOpenComments}
+        />
         {openComments ? (
           <>
             <hr className="my-3" />
-            <PostComments {...{ post_id }} />
+            <PostComments comments={post.comments} setPost={setPost} />
           </>
         ) : null}
       </div>

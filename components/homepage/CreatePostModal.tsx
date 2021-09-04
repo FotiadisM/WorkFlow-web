@@ -149,7 +149,9 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
   setIsModalOpen,
 }) => {
   const auth = useAuth();
-  const [selected, setSelected] = useState<string>(publishOptions[1]);
+  const [selected, setSelected] = useState<string>(publishOptions[2]);
+
+  const [text, setText] = useState<string>("");
 
   const onFilesButtonClick = () => {
     const inpt = document.getElementById("filesInput");
@@ -174,6 +176,54 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
 
       return tmpFiles;
     });
+  };
+
+  const onPostCreate = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    console.log("WHAT THE ACTUAL FUCK");
+    const formData = new FormData();
+
+    if (auth !== null) {
+      if (auth?.user !== null) {
+        formData.append("user_id", auth.user.id);
+        formData.append("text", text);
+        switch (selected) {
+          case "Only you":
+            formData.append("visibility", "you");
+            break;
+          case "Only friends":
+            formData.append("visibility", "friends");
+            break;
+          case "All":
+            formData.append("visibility", "all");
+            break;
+        }
+        files.forEach((f) => {
+          if (f.type.match("video.*")) {
+            formData.append("videos", f);
+          }
+          if (f.type.match("image.")) {
+            formData.append("images", f);
+          }
+        });
+      }
+    }
+
+    (async function () {
+      const res = await fetch(serverURI + "/posts/", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        console.log("error creating post:" + text);
+      }
+
+      const post = await res.json();
+      console.log(post);
+    })();
   };
 
   return (
@@ -209,10 +259,11 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
               >
                 What's on your mind, Mike?
               </Dialog.Title>
-              <form className="mt-3" onSubmit={(e) => e.preventDefault()}>
+              <form className="mt-3" onSubmit={(e) => onPostCreate(e)}>
                 <div className="mt-4 flex items-center justify-between">
                   <button
                     className="btn py-2 px-3 flex items-center hover:bg-purple-100 active:bg-purple-50"
+                    type="button"
                     onClick={onFilesButtonClick}
                   >
                     <input
@@ -243,7 +294,10 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
                       Choose who can see your post:
                     </p>
                     <List {...{ selected, setSelected }} />
-                    <button className="ml-3 btn py-2 px-4 text-lg text-white bg-purple-800 rounded-md hover:bg-purple-900 shadow-md">
+                    <button
+                      type="submit"
+                      className="ml-3 btn py-2 px-4 text-lg text-white bg-purple-800 rounded-md hover:bg-purple-900 shadow-md"
+                    >
                       Publish
                     </button>
                   </div>
@@ -258,6 +312,8 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
                     <textarea
                       className="w-full px-4 py-1 rounded-xl bg-gray-100 focus:outline-none"
                       placeholder="Share your thoughts"
+                      value={text}
+                      onChange={(e) => setText(e.target.value)}
                       rows={4}
                     />
                   </div>

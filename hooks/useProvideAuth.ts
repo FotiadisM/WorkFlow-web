@@ -12,13 +12,13 @@ export function useProvideAuth() {
     password: string
   ): Promise<string | null> => {
     setUser({
-      id: "888",
-      f_name: "Kwstas",
-      l_name: "Kaklavas",
-      email: "kwstas@mail.com",
-      company: "Tremple",
-      position: "Sengion Engineer",
-      profile_pic: "48cc65e5-40d2-4fb6-ac21-9f222882d383",
+      id: "0e306495-8cc6-443e-94c5-b6585667c8e7",
+      f_name: "Thodoris",
+      l_name: "Flebas",
+      email: "flebas@mail.com",
+      company: "Skalvenitis",
+      position: "Tameias",
+      profile_pic: "2777baee-5177-4ce9-8ffb-726adb4c39cb",
       role: "normal",
     });
 
@@ -55,16 +55,14 @@ export function useProvideAuth() {
     }
 
     const data = await res.json();
-    console.log(data);
-    // TODO: set user
     setUser({
-      id: "888",
-      f_name: "Kwstas",
-      l_name: "Kaklavas",
-      email: "kwstas@mail.com",
-      company: "Tremple",
-      position: "Sengion Engineer",
-      profile_pic: "",
+      id: data.user.id,
+      f_name: data.user.f_name,
+      l_name: data.user.l_name,
+      email: data.user.email,
+      company: data.user.company,
+      position: data.user.position,
+      profile_pic: data.user.profile_pic,
       role: "normal",
     });
 

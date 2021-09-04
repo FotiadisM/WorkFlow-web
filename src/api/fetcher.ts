@@ -1,15 +1,18 @@
 import { serverURI } from "./url";
 
-export async function fetcher<T>(access_token: string): Promise<T> {
-  const res = await fetch(serverURI, {
+export async function fetcher<T>(
+  url: string,
+  access_token?: string
+): Promise<T> {
+  const res = await fetch(serverURI + url, {
     headers: {
-      "Content-Type": "application/json",
       Authorization: "Bearer " + access_token,
     },
   });
 
   if (!res.ok) {
-    throw new Error(res.statusText);
+    const text = await res.text();
+    throw new Error(res.statusText + " " + text);
   }
 
   return res.json() as Promise<T>;
