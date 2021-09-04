@@ -184,7 +184,7 @@ export const PostComments: React.FC<PostCommentsProps> = ({
             if (c !== null)
               setPost((p) => {
                 if (p !== null)
-                  return { ...p, comments: [...p.comments, c.id] };
+                  return { ...p, comments: [c.id, ...p.comments] };
                 return p;
               });
           })

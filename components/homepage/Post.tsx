@@ -1,4 +1,5 @@
 import { fetchPost } from "@/src/api/posts";
+import { serverURI } from "@/src/api/url";
 import { Feed, Post as hPost } from "@/src/types/posts";
 import { classNames } from "@/src/util";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
@@ -13,9 +14,91 @@ interface PostBodyProps {
 }
 
 const PostBody: React.FC<PostBodyProps> = ({ text, images, videos }) => {
+  const [curMedia, setCurMedia] = useState<{
+    type: "image" | "video";
+    index: number;
+  }>(() => {
+    if (images.length === 0) return { type: "video", index: 0 };
+    return { type: "image", index: 0 };
+  });
+
+  const onBack = () => {
+    if (curMedia.type === "image") {
+      if (curMedia.index === 0) return;
+      setCurMedia((m) => ({ type: "image", index: m.index - 1 }));
+      return;
+    }
+
+    if (curMedia.index === 0) {
+      if (images.length === 0) return;
+      setCurMedia({ type: "image", index: images.length - 1 });
+      return;
+    }
+    setCurMedia((m) => ({ type: "video", index: m.index - 1 }));
+  };
+
+  const onForward = () => {
+    if (curMedia.type === "image") {
+      if (curMedia.index === images.length - 1) {
+        if (videos.length === 0) return;
+        setCurMedia({ type: "video", index: 0 });
+        return;
+      }
+      setCurMedia((m) => ({ type: "image", index: m.index + 1 }));
+      return;
+    }
+
+    if (curMedia.index === videos.length - 1) return;
+    setCurMedia((m) => ({ type: "video", index: m.index + 1 }));
+  };
+
   return (
     <div className="px-3 pb-1">
       <div className="mx-2 mt-2 text-gray-800">{text}</div>
+      {images.length === 0 && videos.length === 0 ? null : (
+        <div className="relative mt-4">
+          {curMedia.type === "image" ? (
+            <img
+              className="rounded-md"
+              src={serverURI + "/static/" + images[curMedia.index]}
+              alt="post picture"
+            />
+          ) : (
+            <video
+              width="100%"
+              className="rounded-md"
+              src={serverURI + "/static/" + videos[curMedia.index]}
+              controls
+            />
+          )}
+          <button
+            className="absolute top-1/2 left-4 transform -translate-y-1/2 text-gray-600"
+            onClick={onBack}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              className="h-8 w-8"
+              viewBox="0 0 16 16"
+            >
+              <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm3.5 7.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5H11.5z" />
+            </svg>
+          </button>
+          <button
+            className="absolute top-1/2 right-4 transform -translate-y-1/2 text-gray-600"
+            onClick={onForward}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              className="h-8 w-8"
+              viewBox="0 0 16 16"
+            >
+              <path d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z" />
+            </svg>
+          </button>
+        </div>
+      )}
     </div>
   );
 };
