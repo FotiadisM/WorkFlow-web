@@ -14,12 +14,33 @@ export const fetchPost = async (post_id: string): Promise<Post | null> => {
   return p.post;
 };
 
+export const fetchComment = async (
+  comment_id: string
+): Promise<Comment | null> => {
+  const res = await fetch(serverURI + "/posts/comments/" + comment_id);
+
+  if (!res.ok) {
+    const txt = await res.text();
+    console.log("ERROR fetching comment", txt);
+    return null;
+  }
+
+  const c = await res.json();
+  return {
+    id: c.comment.id,
+    user_id: c.comment.user_id,
+    text: c.comment.text,
+    likes: c.comment.likes,
+    created: c.comment.created,
+  };
+};
+
 export const postComment = async (
   post_id: string,
   user_id: string,
   text: string
 ): Promise<Comment | null> => {
-  const res = await fetch(serverURI + "posts/comments", {
+  const res = await fetch(serverURI + "/posts/comments", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -40,10 +61,10 @@ export const postComment = async (
   const data = await res.json();
 
   return {
-    id: data.id,
+    id: data.comment.id,
     user_id: user_id,
-    text: data.text,
-    created: data.created,
-    likes: data.likes,
+    text: data.comment.text,
+    created: data.comment.created,
+    likes: data.comment.likes,
   };
 };

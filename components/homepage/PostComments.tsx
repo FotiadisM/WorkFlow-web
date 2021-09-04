@@ -1,5 +1,8 @@
+import { fetchComment, postComment } from "@/src/api/posts";
 import { serverURI } from "@/src/api/url";
+import { fetchPerpetrator } from "@/src/api/user";
 import { Post, Comment } from "@/src/types/posts";
+import { User } from "@/src/types/user";
 import { useLayoutEffect } from "@/src/useIsomorphicLayoutEffect";
 import { classNames } from "@/src/util";
 import React, {
@@ -73,19 +76,27 @@ interface PostCommentProps {
 }
 
 const PostComment: React.FC<PostCommentProps> = ({ comment_id }) => {
+  const auth = useAuth();
   const [liked, setLiked] = useState<boolean>(false);
   const [comment, setComment] = useState<Comment | null>(null);
+  const [commentator, setCommentator] = useState<User | null>(null);
 
   useEffect(() => {
-    const c: Comment = {
-      id: "123",
-      user_id: "1234",
-      text: "That's a comment right there",
-      created: "12:43",
-      likes: [],
-    };
-    // TODO: if user_id in likes, setLiked(true)
-    setComment(c);
+    fetchComment(comment_id)
+      .then((c) => {
+        if (c !== null) {
+          if (auth !== null)
+            if (auth.user !== null)
+              if (c.likes.indexOf(auth.user.id) !== -1) setLiked(true);
+          fetchPerpetrator(c.user_id)
+            .then((u) => {
+              setCommentator(u);
+              setComment(c);
+            })
+            .catch((err) => console.log(err));
+        }
+      })
+      .catch((err) => console.log(err));
   }, [comment_id]);
 
   const onCommentLike = () => {
@@ -93,7 +104,7 @@ const PostComment: React.FC<PostCommentProps> = ({ comment_id }) => {
     setLiked((l) => !l);
   };
 
-  if (comment == null) {
+  if (comment == null || commentator == null) {
     return null;
   }
 
@@ -101,14 +112,14 @@ const PostComment: React.FC<PostCommentProps> = ({ comment_id }) => {
     <div className="flex">
       <img
         className="mt-1 h-8 w-8 rounded-full"
-        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+        src={serverURI + "/static/" + commentator.profile_pic}
         alt="profile-picture"
       />
       <div className="ml-3 flex items-center" style={{ maxWidth: "100%" }}>
         <div>
           <div className="px-3 py-2 rounded-lg bg-gray-100">
             <div className="font-semibold text-purple-500 hover:underline cursor-pointer">
-              Tatas Michalis
+              {commentator.f_name} {commentator.l_name}
             </div>
             <div className="text-gray-700">{comment.text}</div>
           </div>
@@ -153,16 +164,31 @@ const PostComment: React.FC<PostCommentProps> = ({ comment_id }) => {
 };
 
 interface PostCommentsProps {
+  post_id: string;
   comments: string[];
   setPost: Dispatch<SetStateAction<Post | null>>;
 }
 
 export const PostComments: React.FC<PostCommentsProps> = ({
+  post_id,
   comments,
   setPost,
 }) => {
+  const auth = useAuth();
+
   const onComment = (text: string) => {
-    // TODO: post comment to server
+    if (auth !== null)
+      if (auth.user !== null)
+        postComment(post_id, auth.user.id, text)
+          .then((c) => {
+            if (c !== null)
+              setPost((p) => {
+                if (p !== null)
+                  return { ...p, comments: [...p.comments, c.id] };
+                return p;
+              });
+          })
+          .catch((err) => console.log(err));
   };
 
   return (

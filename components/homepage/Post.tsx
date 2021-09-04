@@ -109,14 +109,16 @@ export const Post: React.FC<PostProps> = ({ feed }) => {
   const [liked, setLiked] = useState<boolean>(false);
 
   useEffect(() => {
-    fetchPost(feed.post_id).then((p) => {
-      if (p !== null) {
-        if (auth !== null)
-          if (auth.user !== null)
-            if (p?.likes.indexOf(auth.user.id) !== -1) setLiked(true);
-        setPost(p);
-      }
-    });
+    if (feed.post_id !== undefined) {
+      fetchPost(feed.post_id).then((p) => {
+        if (p !== null) {
+          if (auth !== null)
+            if (auth.user !== null)
+              if (p?.likes.indexOf(auth.user.id) !== -1) setLiked(true);
+          setPost(p);
+        }
+      });
+    }
   }, [feed.post_id]);
 
   const onToggleLike = () => {
@@ -153,7 +155,11 @@ export const Post: React.FC<PostProps> = ({ feed }) => {
         {openComments ? (
           <>
             <hr className="my-3" />
-            <PostComments comments={post.comments} setPost={setPost} />
+            <PostComments
+              post_id={post.id}
+              comments={post.comments}
+              setPost={setPost}
+            />
           </>
         ) : null}
       </div>

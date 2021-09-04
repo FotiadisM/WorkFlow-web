@@ -4,7 +4,7 @@ import { serverURI } from "@/src/api/url";
 export const fetchPerpetrator = async (
   perpetrator_id: string
 ): Promise<User | null> => {
-  const res = await fetch(serverURI + "/users/perpetator/" + perpetrator_id);
+  const res = await fetch(serverURI + "/users/perpetrator/" + perpetrator_id);
 
   if (!res.ok) {
     const text = await res.text();
