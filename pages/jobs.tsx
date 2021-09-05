@@ -4,13 +4,8 @@ import Navbar from "@/components/navbar/Navbar";
 import JobCreationForm from "@/components/jobs/JobCreationForm";
 import { classNames } from "@/src/util";
 import { Job, SideBarType } from "@/src/types/job";
-import {
-  fetchAllJobs,
-  fetchUserAppliedJobs,
-  fetchUserCreatedJobs,
-  fetchUserInterestedJobs,
-} from "@/src/api/jobs";
-import { AuthRoute } from "@/components/auth/AuthRoute";
+import { fetchJobs, postJob } from "@/src/api/jobs";
+import { AuthRoute, useAuth } from "@/components/auth/AuthRoute";
 
 const sideBar: { name: string; type: SideBarType }[] = [
   { name: "Career Opportunities", type: SideBarType.SEARCH },
@@ -20,6 +15,8 @@ const sideBar: { name: string; type: SideBarType }[] = [
 ];
 
 export default function Jobs() {
+  const auth = useAuth();
+
   const [curPage, setCurPage] = useState<number>(0);
   const changePage = (i: number) => {
     if (sideBar[i].type == SideBarType.SEARCH) {
@@ -51,20 +48,44 @@ export default function Jobs() {
   });
 
   useEffect(() => {
-    (async function () {
-      try {
-        const [all, inte, appl, crt] = await Promise.all([
-          fetchAllJobs(),
-          fetchUserInterestedJobs(""),
-          fetchUserAppliedJobs(""),
-          fetchUserCreatedJobs(""),
-        ]);
-        setJobs({ all: all, interested: inte, applied: appl, user: crt });
-        setCurrJobs(all);
-      } catch (err) {
-        console.log(err);
-      }
-    })();
+    fetchJobs()
+      .then((jobs) => {
+        console.log(jobs);
+        if (jobs !== null) {
+          let int: Job[] = [];
+          let appl: Job[] = [];
+          let usr: Job[] = [];
+
+          for (let i = 0; i < jobs.length; i++) {
+            if (auth !== null && auth.user !== null) {
+              if (jobs[i].user_id === auth.user.id) usr.push(jobs[i]);
+              if (jobs[i].interested.indexOf(auth.user.id) !== -1)
+                int.push(jobs[i]);
+              if (jobs[i].applied.indexOf(auth.user.id) !== -1)
+                appl.push(jobs[i]);
+            }
+          }
+
+          setJobs({ all: jobs, interested: int, applied: appl, user: usr });
+          setCurrJobs(jobs);
+        }
+      })
+      .catch((err) => console.error(err));
+
+    // (async function () {
+    //   try {
+    //     const [all, inte, appl, crt] = await Promise.all([
+    //       fetchAllJobs(),
+    //       fetchUserInterestedJobs(""),
+    //       fetchUserAppliedJobs(""),
+    //       fetchUserCreatedJobs(""),
+    //     ]);
+    //     setJobs({ all: all, interested: inte, applied: appl, user: crt });
+    //     setCurrJobs(all);
+    //   } catch (err) {
+    //     console.log(err);
+    //   }
+    // })();
   }, []);
 
   const onJobButtonPress = (job: Job, action: SideBarType) => {
@@ -82,6 +103,7 @@ export default function Jobs() {
       return;
     }
 
+    // add to interested
     if (action === SideBarType.INTERESTED) {
       setJobs((old) => ({
         ...old,
@@ -104,12 +126,19 @@ export default function Jobs() {
   const onJobEdit = (j: Job) => {};
 
   const onJobCreate = (j: Job) => {
-    j.id = "8";
-    setJobFormState({ open: false, mode: "create", job: null });
-    setJobs((o) => {
-      setCurrJobs([...o.user, j]);
-      return { ...o, all: [...o.all, j], user: [...o.user, j] };
-    });
+    if (auth !== null)
+      if (auth.user !== null)
+        postJob(j, auth.user.id)
+          .then((newJ) => {
+            if (newJ !== null) {
+              setJobFormState({ open: false, mode: "create", job: null });
+              setJobs((o) => {
+                setCurrJobs([...o.user, newJ]);
+                return { ...o, all: [...o.all, newJ], user: [...o.user, newJ] };
+              });
+            }
+          })
+          .catch((err) => console.error(err));
   };
 
   return (
@@ -161,9 +190,9 @@ export default function Jobs() {
             {currJobs.map((j, i) => {
               return (
                 <>
-                  {i !== 0 ? <hr /> : null}
+                  {i !== 0 ? <hr key={j.id} /> : null}
                   <JobListItem
-                    key={j.id}
+                    key={i !== 0 ? undefined : j.id}
                     currJob={j}
                     jobs={jobs}
                     currPage={sideBar[curPage]}

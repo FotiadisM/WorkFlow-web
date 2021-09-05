@@ -41,6 +41,9 @@ export default function JobCreationForm({
     },
     description: "",
     skills: [],
+    interested: [],
+    applied: [],
+    created: "",
   });
 
   const onClose = () => {
@@ -70,6 +73,9 @@ export default function JobCreationForm({
           },
           description: jobFormState.job.description,
           skills: jobFormState.job.skills,
+          interested: jobFormState.job.interested,
+          applied: jobFormState.job.applied,
+          created: jobFormState.job.created,
         });
       } else {
         setForm({
@@ -88,6 +94,9 @@ export default function JobCreationForm({
           },
           description: "",
           skills: [],
+          interested: [],
+          applied: [],
+          created: "",
         });
       }
     }

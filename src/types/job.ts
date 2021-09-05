@@ -12,7 +12,7 @@ export interface Job {
   type: "full_time" | "part_time" | "internship";
   location: string;
   company: {
-    company_id: string;
+    company_id?: string;
     company_name: string;
   };
   salary: {
@@ -20,5 +20,8 @@ export interface Job {
     max: number;
   };
   description: string;
+  interested: string[];
+  applied: string[];
   skills: string[];
+  created: string;
 }
