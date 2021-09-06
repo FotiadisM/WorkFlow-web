@@ -7,7 +7,7 @@ const JobDetail: React.FC<{ name: string }> = ({ name, children }) => {
     <>
       <h3 className="text-lg">{name}</h3>
       <hr className="mb-2" />
-      {children}
+      <div className="ml-4">{children}</div>
     </>
   );
 };
@@ -22,6 +22,7 @@ interface JobListItemProps {
   };
   currPage: { name: string; type: SideBarType };
   onJobButtonPress: (job: Job, btnType: SideBarType) => void;
+  onJobApply: (j: Job) => void;
 }
 
 export default function JobListItem({
@@ -29,6 +30,7 @@ export default function JobListItem({
   jobs,
   currPage,
   onJobButtonPress,
+  onJobApply,
 }: JobListItemProps) {
   const [openDetails, setOpenDetails] = useState<boolean>(false);
 
@@ -250,6 +252,20 @@ export default function JobListItem({
             ))}
           </div>
         </JobDetail>
+        <div className="mt-3 flex items-center justify-end">
+          <div className="flex items-center space-x-4">
+            <div className="text-gray-600">
+              <p>People Interested: {currJob.interested.length}</p>
+              <p>People Applied: {currJob.applied.length}</p>
+            </div>
+            <button
+              className="btn px-3 py-2 text-purple-800 text-xl border-2 border-purple-800 hover:bg-purple-50 hover:text-purple-600 hover:border-purple-600"
+              onClick={() => onJobApply(currJob)}
+            >
+              Apply
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

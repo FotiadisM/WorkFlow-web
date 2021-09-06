@@ -6,6 +6,7 @@ import { classNames } from "@/src/util";
 import { Job, SideBarType } from "@/src/types/job";
 import { fetchJobs, postJob } from "@/src/api/jobs";
 import { AuthRoute, useAuth } from "@/components/auth/AuthRoute";
+import { serverURI } from "@/src/api/url";
 
 const sideBar: { name: string; type: SideBarType }[] = [
   { name: "Career Opportunities", type: SideBarType.SEARCH },
@@ -50,7 +51,6 @@ export default function Jobs() {
   useEffect(() => {
     fetchJobs()
       .then((jobs) => {
-        console.log(jobs);
         if (jobs !== null) {
           let int: Job[] = [];
           let appl: Job[] = [];
@@ -71,21 +71,6 @@ export default function Jobs() {
         }
       })
       .catch((err) => console.error(err));
-
-    // (async function () {
-    //   try {
-    //     const [all, inte, appl, crt] = await Promise.all([
-    //       fetchAllJobs(),
-    //       fetchUserInterestedJobs(""),
-    //       fetchUserAppliedJobs(""),
-    //       fetchUserCreatedJobs(""),
-    //     ]);
-    //     setJobs({ all: all, interested: inte, applied: appl, user: crt });
-    //     setCurrJobs(all);
-    //   } catch (err) {
-    //     console.log(err);
-    //   }
-    // })();
   }, []);
 
   const onJobButtonPress = (job: Job, action: SideBarType) => {
@@ -96,19 +81,41 @@ export default function Jobs() {
 
     // remove from interested
     if (action === SideBarType.SEARCH) {
-      setJobs((old) => {
-        old.interested.splice(old.interested.indexOf(job), 1);
-        return { ...old };
-      });
+      fetch(serverURI + "/jobs/interested", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: auth?.user?.id,
+          job_id: job.id,
+        }),
+      })
+        .then(() => {
+          setJobs((old) => {
+            old.interested.splice(old.interested.indexOf(job), 1);
+            return { ...old };
+          });
+        })
+        .catch((err) => console.log(err));
       return;
     }
 
     // add to interested
     if (action === SideBarType.INTERESTED) {
-      setJobs((old) => ({
-        ...old,
-        interested: [...old.interested, job],
-      }));
+      fetch(serverURI + "/jobs/interested", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: auth?.user?.id,
+          job_id: job.id,
+        }),
+      })
+        .then(() => {
+          setJobs((old) => ({
+            ...old,
+            interested: [...old.interested, job],
+          }));
+        })
+        .catch((err) => console.log(err));
       return;
     }
   };
@@ -139,6 +146,24 @@ export default function Jobs() {
             }
           })
           .catch((err) => console.error(err));
+  };
+
+  const onJobApply = (j: Job) => {
+    fetch(serverURI + "/jobs/apply", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user_id: auth?.user?.id,
+        job_id: j.id,
+      }),
+    })
+      .then(() => {
+        setJobs((old) => ({
+          ...old,
+          applied: [...old.applied, j],
+        }));
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -197,6 +222,7 @@ export default function Jobs() {
                     jobs={jobs}
                     currPage={sideBar[curPage]}
                     onJobButtonPress={onJobButtonPress}
+                    onJobApply={onJobApply}
                   />
                 </>
               );
