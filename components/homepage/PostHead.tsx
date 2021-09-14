@@ -2,6 +2,7 @@ import { serverURI } from "@/src/api/url";
 import { fetchPerpetrator } from "@/src/api/user";
 import { feedType } from "@/src/types/posts";
 import { User } from "@/src/types/user";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 interface PostTypeProps {
@@ -72,6 +73,7 @@ export const PostHead: React.FC<PostHeadProps> = ({
   perpetaror_id,
   created,
 }) => {
+  const router = useRouter();
   const [postUser, setPostUser] = useState<User | null>(null);
 
   useEffect(() => {
@@ -92,7 +94,10 @@ export const PostHead: React.FC<PostHeadProps> = ({
             src={serverURI + "/static/" + postUser?.profile_pic}
             alt="profile-picture"
           />
-          <button className="ml-3 font-semibold text-purple-700 cursor-pointer hover:underline focus:outline-none">
+          <button
+            className="ml-3 font-semibold text-purple-700 cursor-pointer hover:underline focus:outline-none"
+            onClick={() => router.push("/user/" + postUser?.id)}
+          >
             {postUser?.f_name} {postUser?.l_name}
           </button>
         </div>

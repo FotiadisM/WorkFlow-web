@@ -106,12 +106,14 @@ const PostBody: React.FC<PostBodyProps> = ({ text, images, videos }) => {
 interface PostStatsProps {
   liked: boolean;
   likesNum: number;
+  commentsNum: number;
   setOpenComments: Dispatch<SetStateAction<boolean>>;
 }
 
 const PostStats: React.FC<PostStatsProps> = ({
   liked,
   likesNum,
+  commentsNum,
   setOpenComments,
 }) => {
   return (
@@ -141,7 +143,7 @@ const PostStats: React.FC<PostStatsProps> = ({
         className="cursor-pointer hover:text-purple-800 focus:outline-none"
         onClick={() => setOpenComments((o) => !o)}
       >
-        14 Comments
+        {commentsNum} Comments
       </button>
     </div>
   );
@@ -228,6 +230,7 @@ export const Post: React.FC<PostProps> = ({ feed }) => {
         <PostStats
           {...{ liked, setOpenComments }}
           likesNum={post.likes.length}
+          commentsNum={post.comments.length}
         />
         <hr className="my-3" />
         <PostActions

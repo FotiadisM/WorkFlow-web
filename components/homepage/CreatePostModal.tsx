@@ -181,7 +181,6 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
   const onPostCreate = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    console.log("WHAT THE ACTUAL FUCK");
     const formData = new FormData();
 
     if (auth !== null) {

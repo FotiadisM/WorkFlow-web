@@ -11,6 +11,11 @@ const dummyPosts: Feed[] = [
     perpetrator_id: "1",
     post_id: "998c0f9c-4910-459b-9ca2-cc2f31cd2233",
   },
+  {
+    type: "post",
+    perpetrator_id: "1",
+    post_id: "3703dc5f-46fa-4ae5-88fd-060a1f370529",
+  },
   // { type: "share", perpetrator_id: "2", post_id: "2" },
   // { type: "comment", perpetrator_id: "3", post_id: "3" },
   // { type: "like", perpetrator_id: "4", post_id: "4" },

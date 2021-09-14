@@ -1,32 +1,52 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MessagingBox from "@/components/conversation/MessagingBox";
 import MessagingUser from "@/components/conversation/MessagingUser";
 import Navbar from "@/components/navbar/Navbar";
-import { AuthRoute } from "@/components/auth/AuthRoute";
-
-const users: { id: string; name: string; image: string }[] = [
-  {
-    id: "1",
-    name: "Jim Manouris",
-    image:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-  },
-  {
-    id: "2",
-    name: "John Xatzopoulos",
-    image:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-  },
-  {
-    id: "3",
-    name: "Michail Tatas",
-    image:
-      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-  },
-];
+import { AuthRoute, useAuth } from "@/components/auth/AuthRoute";
+import { Conversation } from "@/src/types/conversation";
+import { serverURI, serverWSURI } from "@/src/api/url";
+import { User } from "@/src/types/user";
 
 export default function Conversations() {
+  const auth = useAuth();
   const [curUser, setCurUser] = useState<number>(0);
+  const [convs, setConvs] = useState<Conversation[]>([]);
+  const [currPerp, setCurrPerp] = useState<User | null>(null);
+
+  useEffect(() => {
+    if (auth !== null) {
+      if (auth.user !== null) {
+        fetch(serverURI + "/users/connections/" + auth.user.id)
+          .then((res) => res.json())
+          .then((data) => {
+            setConvs(data.connections);
+          })
+          .catch((err) => console.log("failed to fetch connections: ", err));
+      }
+    }
+  }, []);
+
+  const [wsInstance, setWsInstance] = useState<WebSocket | null>(null);
+  useEffect(() => {
+    if (window !== undefined) {
+      if (auth !== null) {
+        if (auth.user !== null) {
+          const ws = new WebSocket(serverWSURI + "/ws/" + auth.user.id);
+          setWsInstance(ws);
+        }
+      }
+    }
+
+    return () => {
+      if (wsInstance?.readyState !== 3) {
+        wsInstance?.close();
+      }
+    };
+  }, []);
+
+  if (convs.length === 0 || wsInstance === null) {
+    return null;
+  }
 
   return (
     <AuthRoute>
@@ -37,17 +57,23 @@ export default function Conversations() {
             className="pr-7 border-r space-y-1"
             style={{ flexBasis: "100%", maxWidth: "270px" }}
           >
-            {users.map((u, i) => (
+            {convs.map((c, i) => (
               <MessagingUser
-                key={u.id}
-                user={u}
-                current={users[curUser].id === u.id}
+                key={c.conn_id}
+                user_id={c.user_id}
+                current={convs[curUser].user_id === c.user_id}
                 setCurUser={() => setCurUser(i)}
+                setCurrPerp={setCurrPerp}
               />
             ))}
           </div>
           <div style={{ flexShrink: 2 }}>
-            <MessagingBox user={users[curUser]} />
+            <MessagingBox
+              perp={currPerp}
+              conn_id={convs[curUser].conn_id}
+              user_id={convs[curUser].user_id}
+              wsInstance={wsInstance}
+            />
           </div>
         </div>
       </main>

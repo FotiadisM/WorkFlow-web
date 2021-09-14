@@ -1,45 +1,95 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { classNames } from "@/src/util";
 import { useLayoutEffect } from "@/src/useIsomorphicLayoutEffect";
-
-interface Message {
-  convID: string;
-  userID: string;
-  timestamp: string;
-  text: string;
-}
-
-const testMessages: Message[] = [
-  { convID: "1", userID: "1", timestamp: "12124512", text: "hello" },
-  { convID: "1", userID: "1", timestamp: "12124512", text: "what's up" },
-  { convID: "1", userID: "2", timestamp: "12124512", text: "hello, good, y?" },
-  { convID: "1", userID: "1", timestamp: "12124512", text: "fine" },
-  {
-    convID: "1",
-    userID: "2",
-    timestamp: "12124512",
-    text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.e",
-  },
-];
+import { User } from "@/src/types/user";
+import { serverURI } from "@/src/api/url";
+import { Message } from "@/src/types/conversation";
+import { useAuth } from "../auth/AuthRoute";
+import Link from "next/link";
 
 interface MessagingBoxProps {
-  user: { id: string; name: string; image: string };
+  conn_id: string;
+  user_id: string;
+  perp: User | null;
+  wsInstance: WebSocket;
 }
 
-export default function MessagingBox({ user }: MessagingBoxProps) {
-  const [messages, setMessages] = useState<Message[]>(testMessages);
+export default function MessagingBox({
+  conn_id,
+  user_id,
+  perp,
+  wsInstance,
+}: MessagingBoxProps) {
+  const auth = useAuth();
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  useEffect(() => {
+    fetch(serverURI + "/conversations/messages/" + conn_id)
+      .then((res) => res.json())
+      .then((data) => setMessages(data.messages))
+      .catch((err) => console.log(err));
+  }, [conn_id]);
+
+  useEffect(() => {
+    wsInstance.addEventListener("message", (e) => {
+      let msg = JSON.parse(e.data);
+      if (msg.conn_id === conn_id) {
+        setMessages((m) => {
+          return [
+            ...m,
+            {
+              id: msg.id,
+              senter_id: msg.senter_id,
+              text: msg.text,
+              time: msg.time,
+            },
+          ];
+        });
+      }
+    });
+
+    return () => {
+      wsInstance.removeEventListener("message", () => {});
+    };
+  }, []);
+
   const [curMsg, setCurMsg] = useState<string>("");
   const msgBox = useRef<HTMLDivElement>(null);
-
   const onMessageSent = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (curMsg !== undefined) {
-      setMessages((m) => [
-        ...m,
-        { convID: "1", userID: "2", timestamp: "451245", text: curMsg },
-      ]);
-      setCurMsg("");
+      if (auth !== null) {
+        if (auth.user !== null) {
+          fetch(serverURI + "/conversations/messages", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              conv_id: conn_id,
+              senter_id: auth.user.id,
+              text: curMsg,
+            }),
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              setMessages((m) => {
+                return [
+                  ...m,
+                  {
+                    id: data.id,
+                    senter_id: auth.user!.id,
+                    text: curMsg,
+                    time: data.time,
+                  },
+                ];
+              });
+              setCurMsg("");
+            })
+            .catch((err) => console.log(err));
+        }
+      }
     }
   };
 
@@ -51,15 +101,25 @@ export default function MessagingBox({ user }: MessagingBoxProps) {
     }
   }, [messages]);
 
+  if (perp === null) {
+    return null;
+  }
+
   return (
-    <div className="ml-7">
+    <div className="ml-7" style={{ minWidth: "800px" }}>
       <div>
         <div className="flex items-center justify-between">
           <div className="flex items-center pb-4">
-            <img className="rounded-full h-14 w-14 mr-4" src={user.image} />
-            <h1 className="text-2xl font-semibold">{user.name}</h1>
+            <img
+              className="rounded-full h-14 w-14 mr-4"
+              src={serverURI + "/static/" + perp.profile_pic}
+            />
+            <Link href={"/user/" + perp.id}>
+              <a className="text-2xl font-semibold hover:text-purple-800">
+                {perp.f_name} {perp.l_name}
+              </a>
+            </Link>
           </div>
-          <div className="text-gray-600">12:43</div>
         </div>
         <hr />
       </div>
@@ -72,15 +132,16 @@ export default function MessagingBox({ user }: MessagingBoxProps) {
         >
           {messages.map((m) => (
             <div
+              key={m.id}
               className={classNames(
-                m.userID === user.id
+                m.senter_id === user_id
                   ? "bg-gray-100 text-gray-800"
                   : "bg-purple-800 text-white",
                 "px-2 py-1 rounded-md"
               )}
               style={{
                 maxWidth: "40%",
-                alignSelf: m.userID === user.id ? "flex-start" : "flex-end",
+                alignSelf: m.senter_id === user_id ? "flex-start" : "flex-end",
               }}
             >
               {m.text}

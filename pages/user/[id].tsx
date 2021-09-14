@@ -2,18 +2,17 @@ import { useAuth } from "@/components/auth/AuthRoute";
 import { Post } from "@/components/homepage/Post";
 import Navbar from "@/components/navbar/Navbar";
 import { serverURI } from "@/src/api/url";
+import { fetchPerpetrator } from "@/src/api/user";
+import { Feed } from "@/src/types/posts";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
-const dummyPosts: {
-  ftype: "post" | "share" | "like" | "comment";
-  post_id: string;
-  perpetaror_id: string;
-}[] = [
-  { ftype: "post", perpetaror_id: "1", post_id: "1" },
-  { ftype: "share", perpetaror_id: "2", post_id: "2" },
-  { ftype: "comment", perpetaror_id: "3", post_id: "3" },
-  { ftype: "like", perpetaror_id: "4", post_id: "4" },
+const dummyPosts: Feed[] = [
+  {
+    type: "post",
+    perpetrator_id: "1",
+    post_id: "998c0f9c-4910-459b-9ca2-cc2f31cd2233",
+  },
 ];
 
 export default function UserProfile() {
@@ -23,6 +22,7 @@ export default function UserProfile() {
   const auth = useAuth();
 
   const [profUser, setProfUser] = useState({
+    id: "",
     f_name: "",
     l_name: "",
     email: "",
@@ -31,19 +31,17 @@ export default function UserProfile() {
     profile_pic: "",
   });
 
+  // TODO: post Connection request
+  const [connections, setConnections] = useState();
+
   useEffect(() => {
     if (id !== undefined) {
       if (typeof id === "string") {
         if (id !== auth?.user?.id) {
-          // TODO: fetch user
-          setProfUser({
-            f_name: "Paraskeuas",
-            l_name: "Feugatos",
-            email: "feugatos@mail.com",
-            company: "Skrr International",
-            position: "Skrr Wizard",
-            profile_pic:
-              "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+          fetchPerpetrator(id).then((u) => {
+            if (u !== null) {
+              setProfUser(u);
+            }
           });
         }
       }
@@ -71,7 +69,8 @@ export default function UserProfile() {
           <div className="pt-4 flex-1">
             <div className="flex items-end">
               <h1 className="text-4xl font-medium italic">
-                {utilUserCheck(auth?.user?.f_name, profUser.f_name)}
+                {utilUserCheck(auth?.user?.f_name, profUser.f_name)}{" "}
+                {utilUserCheck(auth?.user?.l_name, profUser.l_name)}
               </h1>
               <h3 className="pl-8 pb-1 text-xl text-gray-800 italic">
                 {utilUserCheck(auth?.user?.position, profUser.position)}{" "}
@@ -141,8 +140,8 @@ export default function UserProfile() {
           </div>
         </div>
         <div className="mt-8 space-y-4">
-          {dummyPosts.map((p) => (
-            <Post key={p.post_id} {...p} />
+          {dummyPosts.map((f) => (
+            <Post key={f.post_id} feed={f} />
           ))}
         </div>
       </main>
