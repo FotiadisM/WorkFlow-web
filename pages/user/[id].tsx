@@ -3,6 +3,7 @@ import { Post } from "@/components/homepage/Post";
 import Navbar from "@/components/navbar/Navbar";
 import { serverURI } from "@/src/api/url";
 import { fetchPerpetrator } from "@/src/api/user";
+import { Conversation } from "@/src/types/conversation";
 import { Feed } from "@/src/types/posts";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
@@ -20,7 +21,6 @@ export default function UserProfile() {
   const { id } = router.query;
 
   const auth = useAuth();
-
   const [profUser, setProfUser] = useState({
     id: "",
     f_name: "",
@@ -30,9 +30,6 @@ export default function UserProfile() {
     position: "",
     profile_pic: "",
   });
-
-  // TODO: post Connection request
-  const [connections, setConnections] = useState();
 
   useEffect(() => {
     if (id !== undefined) {
@@ -47,6 +44,34 @@ export default function UserProfile() {
       }
     }
   }, [id]);
+
+  const [isFriend, setIsFriend] = useState<{ conn_id: string } | false>(false);
+  const [connections, setConnections] = useState<Conversation[]>([]);
+  useEffect(() => {
+    fetch(serverURI + "/users/connections/" + id)
+      .then((res) => res.json())
+      .then((data) => {
+        const conss: Conversation[] = data.connections;
+        if (auth !== null) {
+          if (auth.user !== null) {
+            if (auth.user.id !== id) {
+              conss.forEach((c) => {
+                if (c.user_id === auth?.user?.id) {
+                  setIsFriend({ conn_id: c.conn_id });
+                }
+              });
+            }
+          }
+        }
+        setConnections(conss);
+      })
+      .catch((err) => console.log("failed to fetch connections: ", err));
+  }, [id]);
+
+  const onConnectionPost = () => {
+    console.log("sending new request")
+  };
+  const onConnectionRemove = () => {console.log("remove friend")};
 
   const utilUserCheck = (v1: any, v2: any) => {
     return id === auth?.user?.id ? v1 : v2;
@@ -80,46 +105,71 @@ export default function UserProfile() {
             </div>
             <hr />
             <div className="pt-2 flex items-center text-gray-700">
-              <p className="mr-2">973 connections</p>
-              {id === auth?.user?.id ? null : (
-                <>
-                  <p>|</p>
-                  <p className="ml-2">235 in common</p>
-                </>
-              )}
+              <p className="mr-2">{connections?.length} connections</p>
             </div>
-            {id === auth?.user?.id ? null : (
+            {isFriend === false ? (
+              [
+                auth?.user?.id === id ? null : (
+                  <div className="pt-4 flex items-center">
+                    <button
+                      className="btn px-3 py-2 text-purple-800 border border-purple-800 hover:text-white hover:bg-purple-800 flex items-center"
+                      onClick={onConnectionPost}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        className="mr-2"
+                        viewBox="0 0 16 16"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z"
+                        />
+                        <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                      </svg>
+                      Send conenction request
+                    </button>
+                  </div>
+                ),
+              ]
+            ) : (
               <div className="pt-4 flex items-center justify-between">
                 <div className="flex items-center">
-                  <button className="btn px-3 mr-3 py-2 text-purple-800 border border-purple-800 hover:text-white hover:bg-purple-800 flex items-center">
+                  <button
+                    className="btn px-3 mr-3 py-2 text-purple-800 border border-purple-800 hover:text-white hover:bg-purple-800 flex items-center"
+                    onClick={() => {
+                      router.push("/conversations");
+                    }}
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
                       fill="currentColor"
-                      className="mr-2"
+                      className="h-5 w-5 mr-2"
                       viewBox="0 0 16 16"
                     >
                       <path d="M8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6-.097 1.016-.417 2.13-.771 2.966-.079.186.074.394.273.362 2.256-.37 3.597-.938 4.18-1.234A9.06 9.06 0 0 0 8 15z" />
                     </svg>
                     Message
                   </button>
-                  <button className="btn px-3 py-2 text-purple-800 border border-purple-800 hover:text-white hover:bg-purple-800 flex items-center">
+                  <button
+                    className="btn px-3 py-2 text-purple-800 border border-purple-800 hover:text-white hover:bg-purple-800 flex items-center"
+                    onClick={onConnectionRemove}
+                  >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
+                      className="h-5 w-5 mr-2"
+                      viewBox="0 0 20 20"
                       fill="currentColor"
-                      className="mr-2"
-                      viewBox="0 0 16 16"
                     >
                       <path
                         fillRule="evenodd"
-                        d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0z"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                        clipRule="evenodd"
                       />
-                      <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
                     </svg>
-                    Send conenction request
+                    Remove friend
                   </button>
                 </div>
                 <button className="btn px-3 py-2 text-purple-800 border border-purple-800 hover:text-white hover:bg-purple-800 flex items-center">

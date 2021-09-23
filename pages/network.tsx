@@ -1,94 +1,14 @@
 import { useEffect, useState } from "react";
 import Navbar from "@/components/navbar/Navbar";
 import { useRouter } from "next/router";
-import { AuthRoute } from "@/components/auth/AuthRoute";
-
-const mockNetworkUsers: NetworkUser[] = [
-  {
-    id: "1",
-    fname: "Mike",
-    lname: "Fotiadis",
-    company: "Google",
-    occupation: "DevOps Enginner",
-    profilePic: "",
-  },
-  {
-    id: "2",
-    fname: "Mike",
-    lname: "Fotiadis",
-    company: "Google",
-    occupation: "DevOps Enginner",
-    profilePic: "",
-  },
-  {
-    id: "3",
-    fname: "Mike",
-    lname: "Fotiadis",
-    company: "Google",
-    occupation: "DevOps Enginner",
-    profilePic: "",
-  },
-  {
-    id: "4",
-    fname: "Mike",
-    lname: "Fotiadis",
-    company: "Google",
-    occupation: "DevOps Enginner",
-    profilePic: "",
-  },
-  {
-    id: "5",
-    fname: "Mike",
-    lname: "Fotiadis",
-    company: "Google",
-    occupation: "DevOps Enginner",
-    profilePic: "",
-  },
-  {
-    id: "6",
-    fname: "Mike",
-    lname: "Fotiadis",
-    company: "Google",
-    occupation: "DevOps Enginner",
-    profilePic: "",
-  },
-  {
-    id: "7",
-    fname: "Mike",
-    lname: "Fotiadis",
-    company: "Google",
-    occupation: "DevOps Enginner",
-    profilePic: "",
-  },
-  {
-    id: "8",
-    fname: "Mike",
-    lname: "Fotiadis",
-    company: "Google",
-    occupation: "DevOps Enginner",
-    profilePic: "",
-  },
-  {
-    id: "9",
-    fname: "Mike",
-    lname: "Fotiadis",
-    company: "Google",
-    occupation: "DevOps Enginner",
-    profilePic: "",
-  },
-];
-
-interface NetworkUser {
-  id: string;
-  fname: string;
-  lname: string;
-  profilePic: string;
-  company: string;
-  occupation: string;
-}
+import { AuthRoute, useAuth } from "@/components/auth/AuthRoute";
+import { Conversation } from "@/src/types/conversation";
+import { User } from "@/src/types/user";
+import { serverURI } from "@/src/api/url";
+import { fetchPerpetrator } from "@/src/api/user";
 
 interface NetworkUserProps {
-  user: NetworkUser;
+  user: User;
 }
 
 const NetworkUser: React.FC<NetworkUserProps> = ({ user }) => {
@@ -99,11 +19,11 @@ const NetworkUser: React.FC<NetworkUserProps> = ({ user }) => {
       <div className="flex items-center space-x-8 ml-5">
         <img
           className="h-12 w-12 rounded-full ring ring-offset-4 ring-purple-800 m-1"
-          src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+          src={serverURI + "/static/" + user.profile_pic}
           alt="profile-picture"
         />
         <div className="text-xl">
-          {user.fname} {user.lname}
+          {user.f_name} {user.l_name}
         </div>
         <div className="flex items-center justify-center">
           <svg
@@ -114,7 +34,7 @@ const NetworkUser: React.FC<NetworkUserProps> = ({ user }) => {
           >
             <path d="M6.5 1A1.5 1.5 0 0 0 5 2.5V3H1.5A1.5 1.5 0 0 0 0 4.5v8A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-8A1.5 1.5 0 0 0 14.5 3H11v-.5A1.5 1.5 0 0 0 9.5 1h-3zm0 1h3a.5.5 0 0 1 .5.5V3H6v-.5a.5.5 0 0 1 .5-.5zm1.886 6.914L15 7.151V12.5a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5V7.15l6.614 1.764a1.5 1.5 0 0 0 .772 0zM1.5 4h13a.5.5 0 0 1 .5.5v1.616L8.129 7.948a.5.5 0 0 1-.258 0L1 6.116V4.5a.5.5 0 0 1 .5-.5z" />
           </svg>
-          <div className="ml-2">{user.occupation}</div>
+          <div className="ml-2">{user.position}</div>
         </div>
         <div className="flex items-center justify-center">
           <svg
@@ -155,25 +75,72 @@ const NetworkUser: React.FC<NetworkUserProps> = ({ user }) => {
   );
 };
 
-export default function Network() {
-  const [usersConnections, setUsersConnections] = useState<NetworkUser[]>([]);
-  const [searchText, setSearchText] = useState<string>("");
-  const [networkUsers, setNetworkUsers] = useState<NetworkUser[]>([]);
+interface NetworkUserWraperProps {
+  user_id: string;
+}
+
+const NetworkUserWraper: React.FC<NetworkUserWraperProps> = ({ user_id }) => {
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
+    fetchPerpetrator(user_id)
+      .then((u) => {
+        setUser(u);
+      })
+      .catch((err) => console.log(err));
+  }, [user_id]);
+
+  if (user === null) {
+    return null;
+  }
+
+  return <NetworkUser user={user} />;
+};
+
+export default function Network() {
+  const auth = useAuth();
+
+  const [connections, setConnections] = useState<Conversation[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    if (auth !== null) {
+      if (auth.user !== null) {
+        fetch(serverURI + "/users/connections/" + auth.user.id)
+          .then((res) => res.json())
+          .then((data) => {
+            setConnections(data.connections);
+          })
+          .catch((err) => console.log("failed to fetch connections: ", err));
+      }
+    }
+
+    fetch(serverURI + "/users")
+      .then((res) => res.json())
+      .then((data) => setUsers(data.users))
+      .catch((err) => console.log(err));
+  }, []);
+
+  const [searchText, setSearchText] = useState<string>("");
+  useEffect(() => {
     if (searchText === "") {
-      setNetworkUsers(usersConnections);
+      // setNetworkUsers(usersConnections);
     } else {
       // fetch users that match text
       // setNetworkUsers();
     }
   }, [searchText]);
 
-  useEffect(() => {
-    // fetch users connections
-    setUsersConnections(mockNetworkUsers);
-    setNetworkUsers(mockNetworkUsers);
-  }, []);
+  const evalUser = (user_id: string): boolean => {
+    if (auth !== null)
+      if (auth.user !== null) if (auth.user.id === user_id) return false;
+
+    for (let i = 0; i < connections.length; i++) {
+      if (connections[i].user_id === user_id) return false;
+    }
+
+    return true;
+  };
 
   return (
     <AuthRoute>
@@ -191,9 +158,16 @@ export default function Network() {
             className="space-y-2 mt-2 overflow-y-auto"
             style={{ width: "70vw", maxWidth: "1120px" }}
           >
-            {networkUsers.map((u) => (
-              <NetworkUser key={u.id} user={u} />
+            {connections.map((c) => (
+              <NetworkUserWraper key={c.conn_id} user_id={c.user_id} />
             ))}
+            {users.length === 0 ? null : <div><hr className="my-8 mx-12 border-2 border-purple-800" /></div>}
+            {users.map((u) => {
+              if (evalUser(u.id)) {
+                return <NetworkUser key={u.id} user={u} />;
+              }
+              return null;
+            })}
           </div>
         </div>
       </main>

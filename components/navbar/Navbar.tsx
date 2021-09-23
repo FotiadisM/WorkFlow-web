@@ -4,6 +4,7 @@ import { classNames } from "@/src/util";
 import { useLayoutEffect } from "@/src/useIsomorphicLayoutEffect";
 import { ProfileOptions } from "./ProfileOptions";
 import { Notifications } from "./Notifications";
+import { useAuth } from "../auth/AuthRoute";
 
 const navigation: { name: string; href: string }[] = [
   { name: "Home", href: "/home" },
@@ -18,6 +19,7 @@ interface NavBarProps {
 
 export default function Navbar({ getHeight }: NavBarProps) {
   const router = useRouter();
+  const auth = useAuth();
 
   useLayoutEffect(() => {
     if (getHeight !== undefined) {
@@ -56,8 +58,12 @@ export default function Navbar({ getHeight }: NavBarProps) {
             ))}
           </div>
           <div className="flex items-center">
-            <Notifications />
-            <ProfileOptions />
+            {auth === null || auth?.user === null ? null : (
+              <>
+                <Notifications />
+                <ProfileOptions />
+              </>
+            )}
           </div>
         </div>
       </div>
