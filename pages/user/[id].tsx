@@ -69,9 +69,27 @@ export default function UserProfile() {
   }, [id]);
 
   const onConnectionPost = () => {
-    console.log("sending new request")
+    if (auth !== null)
+      if (auth.user !== null)
+        fetch(serverURI + "/users/connections", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user_id: auth.user.id,
+            receiver_id: id,
+          }),
+        })
+          .then((res) => res.json())
+          .then((data) => console.log(data))
+          .catch((err) =>
+            console.log("failed to post connections request:", err)
+          );
   };
-  const onConnectionRemove = () => {console.log("remove friend")};
+  const onConnectionRemove = () => {
+    console.log("remove friend");
+  };
 
   const utilUserCheck = (v1: any, v2: any) => {
     return id === auth?.user?.id ? v1 : v2;
