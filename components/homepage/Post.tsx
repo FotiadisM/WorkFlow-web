@@ -207,8 +207,27 @@ export const Post: React.FC<PostProps> = ({ feed }) => {
   }, [feed.post_id]);
 
   const onToggleLike = () => {
-    // TODO: post toggle like
-    setLiked((l) => !l);
+    (async () => {
+      if (auth !== null)
+        if (auth.user !== null) {
+          try {
+            const res = await fetch(serverURI + "/posts/like", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                user_id: auth.user.id,
+                post_id: feed.post_id,
+              }),
+            });
+
+            if (res.status === 200) {
+              setLiked((l) => !l);
+            }
+          } catch (err) {
+            console.log(err);
+          }
+        }
+    })();
   };
 
   const [openComments, setOpenComments] = useState<boolean>(false);

@@ -34,6 +34,9 @@ const FriendRequest: React.FC<FriendRequestProps> = ({ user_id }) => {
     return null;
   }
 
+  const onRequestAccept = () => {};
+  const onRequestReject = () => {};
+
   return (
     <div className="px-2 flex items-center">
       <div className="border-r pr-2">
@@ -53,10 +56,16 @@ const FriendRequest: React.FC<FriendRequestProps> = ({ user_id }) => {
           Sent you a <br /> Connection request
         </h4>
         <div className="flex items-center space-x-3">
-          <button className="btn px-2 py-1 text-sm bg-purple-800 text-white hover:bg-purple-900">
+          <button
+            className="btn px-2 py-1 text-sm bg-purple-800 text-white hover:bg-purple-900"
+            onClick={onRequestAccept}
+          >
             Accept
           </button>
-          <button className="btn px-2 py-1 text-sm border border-purple-800 text-purple-800 hover:bg-purple-50">
+          <button
+            className="btn px-2 py-1 text-sm border border-purple-800 text-purple-800 hover:bg-purple-50"
+            onClick={onRequestReject}
+          >
             Reject
           </button>
         </div>
@@ -72,21 +81,27 @@ export const Notifications: React.FC<NotificationsProps> = () => {
   const [requests, setRequests] = useState<Conversation[]>([]);
 
   useEffect(() => {
-    if (auth !== null)
-      if (auth.user !== null)
-        fetch(serverURI + "/users/connectionRequests/" + auth.user.id)
-          .then((res) => res.json())
-          .then((data) => setRequests(data.connections))
-          .catch((err) =>
-            console.log("faile to get connections requests:", err)
-          );
+    const interval = setInterval(() => {
+      if (auth !== null)
+        if (auth.user !== null)
+          fetch(serverURI + "/users/connectionRequests/" + auth.user.id)
+            .then((res) => res.json())
+            .then((data) => setRequests(data.connections))
+            .catch((err) =>
+              console.log("faile to get connections requests:", err)
+            );
+    }, 3000);
+
+    return () => {
+      clearInterval(interval);
+    };
   });
 
   return (
     <Menu as="div" className="ml-5">
       {({ open }) => (
         <>
-          <Menu.Button className="p-1 text-gray-100 bg-purple-800 rounded-full hover:text-white focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-offset-purple-100 focus:ring-white">
+          <Menu.Button className="relative p-1 text-gray-100 bg-purple-800 rounded-full hover:text-white focus:outline-none focus:ring-1 focus:ring-offset-2 focus:ring-offset-purple-100 focus:ring-white">
             <span className="sr-only">View notifications</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -97,6 +112,15 @@ export const Notifications: React.FC<NotificationsProps> = () => {
             >
               <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z" />
             </svg>
+            {requests === undefined
+              ? null
+              : [
+                  requests.length === 0 ? null : (
+                    <div className="absolute -top-4 -right-4 text-white rounded-full bg-red-400 h-6 w-6 text-center">
+                      {requests.length}
+                    </div>
+                  ),
+                ]}
           </Menu.Button>
           <Transition
             show={open}
