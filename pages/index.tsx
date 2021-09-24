@@ -1,7 +1,7 @@
 import { useAuth } from "@/components/auth/AuthRoute";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useState } from "react";
 
 const navigation: { name: string; href: string }[] = [
   { name: "Product", href: "#" },
@@ -43,12 +43,23 @@ export default function LandingPage() {
   const router = useRouter();
   const auth = useAuth();
 
+  const [form, setForm] = useState<{ email: string; password: string }>({
+    email: "",
+    password: "",
+  });
+
   const onSignIn = (e: React.FormEvent) => {
     e.preventDefault();
-    if (auth !== null) {
-      auth.signIn("asdf", "asd");
-      router.push("/home");
-    }
+    (async () => {
+      if (auth !== null) {
+        const res = await auth.signIn(form.email, form.password);
+        if (res === null) {
+          router.push("/home");
+        } else {
+          window.alert("Credentials don't match");
+        }
+      }
+    })();
   };
 
   return (
@@ -98,6 +109,10 @@ export default function LandingPage() {
                   // required
                   className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10"
                   placeholder="Email address"
+                  value={form.email}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, email: e.target.value }))
+                  }
                 />
               </div>
               <div>
@@ -112,6 +127,10 @@ export default function LandingPage() {
                   // required
                   className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10"
                   placeholder="Password"
+                  value={form.password}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, password: e.target.value }))
+                  }
                 />
               </div>
             </div>

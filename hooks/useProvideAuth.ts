@@ -11,6 +11,33 @@ export function useProvideAuth() {
     email: string,
     password: string
   ): Promise<string | null> => {
+    if (email !== "" && password !== "") {
+      try {
+        const res = await fetch(serverURI + "/auth/signIn", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password,
+          }),
+        });
+
+        if (res.status === 200) {
+          const u = await res.json();
+          if (u.user !== undefined) {
+            setUser(u.user);
+            return null;
+          }
+        }
+
+        return "error";
+      } catch (err) {
+        return "error";
+      }
+    }
+
     setUser({
       id: "0e306495-8cc6-443e-94c5-b6585667c8e7",
       f_name: "Thodoris",
