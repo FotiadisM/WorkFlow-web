@@ -8,14 +8,6 @@ import { Feed } from "@/src/types/posts";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
-const dummyPosts: Feed[] = [
-  {
-    type: "post",
-    perpetrator_id: "1",
-    post_id: "998c0f9c-4910-459b-9ca2-cc2f31cd2233",
-  },
-];
-
 export default function UserProfile() {
   const router = useRouter();
   const { id } = router.query;
@@ -48,24 +40,67 @@ export default function UserProfile() {
   const [isFriend, setIsFriend] = useState<{ conn_id: string } | false>(false);
   const [connections, setConnections] = useState<Conversation[]>([]);
   useEffect(() => {
-    fetch(serverURI + "/users/connections/" + id)
-      .then((res) => res.json())
-      .then((data) => {
-        const conss: Conversation[] = data.connections;
-        if (auth !== null) {
-          if (auth.user !== null) {
-            if (auth.user.id !== id) {
-              conss.forEach((c) => {
-                if (c.user_id === auth?.user?.id) {
-                  setIsFriend({ conn_id: c.conn_id });
-                }
-              });
+    if (id !== undefined)
+      fetch(serverURI + "/users/connections/" + id)
+        .then((res) => res.json())
+        .then((data) => {
+          const conss: Conversation[] = data.connections;
+          if (conss === undefined) return;
+          if (auth !== null) {
+            if (auth.user !== null) {
+              if (auth.user.id !== id) {
+                conss.forEach((c) => {
+                  if (c.user_id === auth?.user?.id) {
+                    setIsFriend({ conn_id: c.conn_id });
+                  }
+                });
+              }
             }
           }
+          setConnections(conss);
+        })
+        .catch((err) => console.log("failed to fetch connections: ", err));
+  }, [id]);
+
+  const [feed, setFeed] = useState<Feed[]>([]);
+  useEffect(() => {
+    (async () => {
+      try {
+        if (id !== undefined) {
+          let from_id = "";
+          if (auth !== null) if (auth.user !== null) from_id = auth.user.id;
+          const res = await fetch(serverURI + "/posts/user", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              user_id: id,
+              from_user_id: from_id,
+            }),
+          });
+
+          if (res.status === 200) {
+            const data = await res.json();
+            console.log("DATA:", data);
+            const posts = data.posts;
+            if (posts === undefined) return;
+            console.log("POSTS:", posts);
+            let fe: Feed[] = [];
+            for (let i = 0; i < posts.length; i++) {
+              fe.push({
+                type: "post",
+                perpetrator_id: "1",
+                post_id: posts[i].id,
+              });
+            }
+            setFeed(fe);
+          }
         }
-        setConnections(conss);
-      })
-      .catch((err) => console.log("failed to fetch connections: ", err));
+      } catch (err) {
+        console.log(err);
+      }
+    })();
   }, [id]);
 
   const onConnectionPost = () => {
@@ -208,9 +243,9 @@ export default function UserProfile() {
           </div>
         </div>
         <div className="mt-8 space-y-4">
-          {dummyPosts.map((f) => (
-            <Post key={f.post_id} feed={f} />
-          ))}
+          {feed === undefined
+            ? null
+            : [feed.map((f) => <Post key={f.post_id} feed={f} />)]}
         </div>
       </main>
     </>

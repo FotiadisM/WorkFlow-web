@@ -18,9 +18,10 @@ import { useAuth } from "../auth/AuthRoute";
 
 interface FriendRequestProps {
   user_id: string;
+  conn_id: string;
 }
 
-const FriendRequest: React.FC<FriendRequestProps> = ({ user_id }) => {
+const FriendRequest: React.FC<FriendRequestProps> = ({ user_id, conn_id }) => {
   const [user, setUser] = useState<User | null>(null);
   useEffect(() => {
     fetchPerpetrator(user_id)
@@ -34,8 +35,48 @@ const FriendRequest: React.FC<FriendRequestProps> = ({ user_id }) => {
     return null;
   }
 
-  const onRequestAccept = () => {};
-  const onRequestReject = () => {};
+  const onRequestAccept = () => {
+    (async () => {
+      try {
+        const res = await fetch(serverURI + "/users/connectionRequests", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            conn_id: conn_id,
+            accept: true,
+          }),
+        });
+
+        if (res.status !== 200) {
+          const data = await res.text();
+          console.log("faled to accept request:", data);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    })();
+  };
+  const onRequestReject = () => {
+    (async () => {
+      try {
+        const res = await fetch(serverURI + "/users/connectionRequests", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            conn_id: conn_id,
+            accept: false,
+          }),
+        });
+
+        if (res.status !== 200) {
+          const data = await res.text();
+          console.log("faled to accept request:", data);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    })();
+  };
 
   return (
     <div className="px-2 flex items-center">
@@ -141,7 +182,10 @@ export const Notifications: React.FC<NotificationsProps> = () => {
                 : [
                     requests.map((r) => (
                       <Menu.Item key={r.conn_id}>
-                        <FriendRequest user_id={r.user_id} />
+                        <FriendRequest
+                          user_id={r.user_id}
+                          conn_id={r.conn_id}
+                        />
                       </Menu.Item>
                     )),
                   ]}
