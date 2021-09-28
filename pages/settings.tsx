@@ -1,5 +1,7 @@
 import { AuthRoute, useAuth } from "@/components/auth/AuthRoute";
 import Navbar from "@/components/navbar/Navbar";
+import { UserEducation } from "@/components/profile/education";
+import { UserExperience } from "@/components/profile/experience";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
@@ -52,6 +54,72 @@ export default function Settings() {
             Settings
           </h1>
           <hr className="mt-3" />
+          <div className="mt-8">
+            <h2 className="text-gray-600 font-medium text-3xl">Experience</h2>
+            <div className="px-10 mt-2 mb-8 space-y-4"></div>
+            <UserExperience user_id={""} />
+            <form
+              className="mt-2 flex items-center space-x-2"
+              onSubmit={(e) => e.preventDefault()}
+            >
+              <input
+                type="text"
+                className="px-2 py-3 border rounded-md"
+                style={{ maxWidth: "200px" }}
+                placeholder="Company"
+              />
+              <input
+                type="text"
+                className="px-2 py-3 border rounded-md"
+                style={{ maxWidth: "200px" }}
+                placeholder="Position"
+              />
+              <input
+                type="text"
+                className="px-2 py-3 border rounded-md"
+                style={{ maxWidth: "200px" }}
+                placeholder="From"
+              />
+              <input
+                type="text"
+                className="px-2 py-3 border rounded-md"
+                style={{ maxWidth: "200px" }}
+                placeholder="To"
+              />
+              <button
+                type="submit"
+                className="btn px-3 py-2 bg-purple-800 text-white hover:bg-purple-900"
+              >
+                Add
+              </button>
+            </form>
+          </div>
+          <div className="mt-8">
+            <h2 className="text-gray-600 font-medium text-3xl">Education</h2>
+            <div className="px-10 mt-2 mb-8 space-y-4"></div>
+            <UserEducation user_id={""} />
+            <form
+              className="mt-2 flex items-center space-x-2"
+              onSubmit={(e) => e.preventDefault()}
+            >
+              <input
+                type="text"
+                className="px-2 py-3 border rounded-md"
+                placeholder="Year"
+              />
+              <input
+                type="text"
+                className="px-2 py-3 border rounded-md"
+                placeholder="Title"
+              />
+              <button
+                type="submit"
+                className="btn px-3 py-2 bg-purple-800 text-white hover:bg-purple-900"
+              >
+                Add
+              </button>
+            </form>
+          </div>
           <div className="mt-8">
             <h2 className="text-gray-600 font-medium text-3xl">Information</h2>
             <form

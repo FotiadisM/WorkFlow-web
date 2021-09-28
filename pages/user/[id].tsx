@@ -1,6 +1,8 @@
 import { useAuth } from "@/components/auth/AuthRoute";
 import { Post } from "@/components/homepage/Post";
 import Navbar from "@/components/navbar/Navbar";
+import { UserEducation } from "@/components/profile/education";
+import { UserExperience } from "@/components/profile/experience";
 import { serverURI } from "@/src/api/url";
 import { fetchPerpetrator } from "@/src/api/user";
 import { Conversation } from "@/src/types/conversation";
@@ -130,6 +132,14 @@ export default function UserProfile() {
     return id === auth?.user?.id ? v1 : v2;
   };
 
+  if (id === undefined) {
+    return null;
+  }
+
+  if (Array.isArray(id)) {
+    return null;
+  }
+
   return (
     <>
       <Navbar />
@@ -241,6 +251,16 @@ export default function UserProfile() {
               </div>
             )}
           </div>
+        </div>
+        <div className="mt-8">
+          <h2 className="text-3xl mb-2">Experience</h2>
+          <hr className="mb-4" />
+          <UserExperience user_id={id} />
+        </div>
+        <div className="mt-8">
+          <h2 className="text-3xl mb-2">Education</h2>
+          <hr className="mb-4" />
+          <UserEducation user_id={id} />
         </div>
         <div className="mt-8 space-y-4">
           {feed === undefined
