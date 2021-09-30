@@ -105,11 +105,12 @@ export default function Settings() {
               <input
                 type="text"
                 className="px-2 py-3 border rounded-md"
+                style={{ maxWidth: "150" }}
                 placeholder="Year"
               />
               <input
                 type="text"
-                className="px-2 py-3 border rounded-md"
+                className="px-2 py-3 border rounded-md flex-1"
                 placeholder="Title"
               />
               <button
