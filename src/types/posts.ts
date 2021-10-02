@@ -1,6 +1,7 @@
 export type feedType = "post" | "share" | "comment" | "like";
 
 export interface Feed {
+  id: string;
   type: feedType;
   post_id: string;
   perpetrator_id: string;

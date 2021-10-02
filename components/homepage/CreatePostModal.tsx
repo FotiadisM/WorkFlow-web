@@ -142,11 +142,13 @@ const FilesPreviewer: React.FC<FilesPreviewerProps> = ({ files, setFiles }) => {
 interface CreatePostModalProps {
   isModalOpen: boolean;
   setIsModalOpen: Dispatch<SetStateAction<boolean>>;
+  onPostSubmit: (post_id: string) => void;
 }
 
 export const CreatePostModal: React.FC<CreatePostModalProps> = ({
   isModalOpen,
   setIsModalOpen,
+  onPostSubmit,
 }) => {
   const auth = useAuth();
   const [selected, setSelected] = useState<string>(publishOptions[2]);
@@ -220,8 +222,9 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({
         console.log("error creating post:" + text);
       }
 
-      const post = await res.json();
-      console.log(post);
+      const data = await res.json();
+      onPostSubmit(data.post.id);
+      console.log(data);
     })();
   };
 

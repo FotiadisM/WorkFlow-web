@@ -1,4 +1,5 @@
 import { serverURI } from "@/src/api/url";
+import { Feed } from "@/src/types/posts";
 import { Dispatch, SetStateAction, useState } from "react";
 import { useAuth } from "../auth/AuthRoute";
 import { CreatePostModal } from "./CreatePostModal";
@@ -24,15 +25,57 @@ const CreateButtons: React.FC<CreateButtonsProps> = ({
   );
 };
 
-interface CreatePostAreaProps {}
+interface CreatePostAreaProps {
+  setFeed: Dispatch<SetStateAction<Feed[]>>;
+}
 
-export const CreatePostArea: React.FC<CreatePostAreaProps> = () => {
+export const CreatePostArea: React.FC<CreatePostAreaProps> = ({ setFeed }) => {
   const auth = useAuth();
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
+  const onPostSubmit = (post_id: string) => {
+    setFeed((oldFeed) => {
+      if (oldFeed === undefined) {
+        return [
+          {
+            id: "-2",
+            perpetrator_id: auth!.user!.id,
+            post_id: post_id,
+            type: "post",
+          },
+        ];
+      }
+
+      if (oldFeed.length === 0) {
+        return [
+          {
+            id: "-2",
+            perpetrator_id: auth!.user!.id,
+            post_id: post_id,
+            type: "post",
+          },
+        ];
+      }
+
+      return [
+        {
+          id: "-2",
+          perpetrator_id: auth!.user!.id,
+          post_id: post_id,
+          type: "post",
+        },
+        ...oldFeed,
+      ];
+    });
+    setIsModalOpen(false);
+  };
+
   return (
     <>
-      <div className="py-2 px-3 rounded-lg shadow-md bg-gray-50">
+      <div
+        className="py-2 px-3 rounded-lg shadow-md bg-gray-50"
+        style={{ minWidth: "556px" }}
+      >
         <div className="flex items-start">
           <img
             className="h-10 w-10 rounded-full"
@@ -72,7 +115,7 @@ export const CreatePostArea: React.FC<CreatePostAreaProps> = () => {
           </CreateButtons>
         </div>
       </div>
-      <CreatePostModal {...{ isModalOpen, setIsModalOpen }} />
+      <CreatePostModal {...{ isModalOpen, setIsModalOpen, onPostSubmit }} />
     </>
   );
 };

@@ -91,6 +91,7 @@ export default function UserProfile() {
             let fe: Feed[] = [];
             for (let i = 0; i < posts.length; i++) {
               fe.push({
+                id: "",
                 type: "post",
                 perpetrator_id: "1",
                 post_id: posts[i].id,
