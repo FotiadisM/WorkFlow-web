@@ -38,16 +38,16 @@ export function useProvideAuth() {
       }
     }
 
-    setUser({
-      id: "0e306495-8cc6-443e-94c5-b6585667c8e7",
-      f_name: "Thodoris",
-      l_name: "Flebas",
-      email: "flebas@mail.com",
-      company: "Skalvenitis",
-      position: "Tameias",
-      profile_pic: "2777baee-5177-4ce9-8ffb-726adb4c39cb",
-      role: "normal",
-    });
+    //     setUser({
+    //       id: "0e306495-8cc6-443e-94c5-b6585667c8e7",
+    //       f_name: "Thodoris",
+    //       l_name: "Flebas",
+    //       email: "flebas@mail.com",
+    //       company: "Skalvenitis",
+    //       position: "Tameias",
+    //       profile_pic: "2777baee-5177-4ce9-8ffb-726adb4c39cb",
+    //       role: "admin",
+    //     });
 
     return null;
   };

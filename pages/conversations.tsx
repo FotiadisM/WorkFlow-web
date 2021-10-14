@@ -44,14 +44,11 @@ export default function Conversations() {
     };
   }, []);
 
-  if (convs.length === 0 || wsInstance === null) {
-    return null;
-  }
-
-  return (
-    <AuthRoute>
-      <Navbar />
-      <main className="flex justify-center py-10">
+  const tmpFunc = () => {
+    if (convs === undefined || convs.length === 0 || wsInstance === null) {
+      return <div>You have no connections to message</div>;
+    } else {
+      return (
         <div className="flex" style={{ width: "70vw", maxWidth: "1120px" }}>
           <div
             className="pr-7 border-r space-y-1"
@@ -76,7 +73,14 @@ export default function Conversations() {
             />
           </div>
         </div>
-      </main>
+      );
+    }
+  };
+
+  return (
+    <AuthRoute>
+      <Navbar />
+      <main className="flex justify-center py-10">{tmpFunc()}</main>
     </AuthRoute>
   );
 }

@@ -117,14 +117,15 @@ export default function Network() {
 
     fetch(serverURI + "/users")
       .then((res) => res.json())
-      .then((data) => setUsers(data.users))
+      .then((data) => {
+        setUsers(data.users);
+      })
       .catch((err) => console.log(err));
   }, []);
 
   const [searchText, setSearchText] = useState<string>("");
   useEffect(() => {
     if (searchText === "") {
-      // setNetworkUsers(usersConnections);
     } else {
       // fetch users that match text
       // setNetworkUsers();
@@ -135,8 +136,10 @@ export default function Network() {
     if (auth !== null)
       if (auth.user !== null) if (auth.user.id === user_id) return false;
 
-    for (let i = 0; i < connections.length; i++) {
-      if (connections[i].user_id === user_id) return false;
+    if (connections !== undefined) {
+      for (let i = 0; i < connections.length; i++) {
+        if (connections[i].user_id === user_id) return false;
+      }
     }
 
     return true;
@@ -158,10 +161,18 @@ export default function Network() {
             className="space-y-2 mt-2 overflow-y-auto"
             style={{ width: "70vw", maxWidth: "1120px" }}
           >
-            {connections.map((c) => (
-              <NetworkUserWraper key={c.conn_id} user_id={c.user_id} />
-            ))}
-            {users.length === 0 ? null : <div><hr className="my-8 mx-12 border-2 border-purple-800" /></div>}
+            {connections === undefined
+              ? null
+              : [
+                  connections.map((c) => (
+                    <NetworkUserWraper key={c.conn_id} user_id={c.user_id} />
+                  )),
+                ]}
+            {users.length === 0 ? null : (
+              <div>
+                <hr className="my-8 mx-12 border-2 border-purple-800" />
+              </div>
+            )}
             {users.map((u) => {
               if (evalUser(u.id)) {
                 return <NetworkUser key={u.id} user={u} />;

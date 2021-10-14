@@ -241,7 +241,7 @@ export const Post: React.FC<PostProps> = ({ feed }) => {
       <PostHead
         user_id={post.user_id}
         type={feed.type}
-        perpetaror_id={feed.perpetrator_id}
+        perpetaror_id={feed.perpetator_id}
         created={post.created}
       />
       <PostBody text={post.text} images={post.images} videos={post.videos} />

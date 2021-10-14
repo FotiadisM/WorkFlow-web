@@ -45,7 +45,7 @@ export const UserEducation: React.FC<UserEducationProps> = ({ user_id }) => {
   const [ed, setEd] = useState<string[]>([]);
 
   useEffect(() => {
-    setEd(["", "", ""]);
+    setEd([""]);
   }),
     [user_id];
 

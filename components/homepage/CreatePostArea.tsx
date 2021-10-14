@@ -39,7 +39,7 @@ export const CreatePostArea: React.FC<CreatePostAreaProps> = ({ setFeed }) => {
         return [
           {
             id: "-2",
-            perpetrator_id: auth!.user!.id,
+            perpetator_id: auth!.user!.id,
             post_id: post_id,
             type: "post",
           },
@@ -50,7 +50,7 @@ export const CreatePostArea: React.FC<CreatePostAreaProps> = ({ setFeed }) => {
         return [
           {
             id: "-2",
-            perpetrator_id: auth!.user!.id,
+            perpetator_id: auth!.user!.id,
             post_id: post_id,
             type: "post",
           },
@@ -60,7 +60,7 @@ export const CreatePostArea: React.FC<CreatePostAreaProps> = ({ setFeed }) => {
       return [
         {
           id: "-2",
-          perpetrator_id: auth!.user!.id,
+          perpetator_id: auth!.user!.id,
           post_id: post_id,
           type: "post",
         },

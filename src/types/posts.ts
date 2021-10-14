@@ -1,10 +1,8 @@
-export type feedType = "post" | "share" | "comment" | "like";
-
 export interface Feed {
   id: string;
-  type: feedType;
+  type: "post" | "share" | "comment" | "like";
   post_id: string;
-  perpetrator_id: string;
+  perpetator_id: string;
 }
 
 export interface Post {

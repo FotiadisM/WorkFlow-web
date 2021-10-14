@@ -30,6 +30,29 @@ export default function Navbar({ getHeight }: NavBarProps) {
     }
   }, []);
 
+  const returnAdminDashboardLink = () => {
+    if (auth !== null)
+      if (auth.user !== null)
+        if (auth.user.role === "admin")
+          return (
+            <Link href="/dashboard">
+              <a
+                className={classNames(
+                  router.route === "/dashboard"
+                    ? "bg-purple-300 text-gray-700"
+                    : "text-gray-100 hover:bg-purple-600",
+                  "px-3 py-2 rounded-md text-sm font-medium"
+                )}
+                aria-current={
+                  router.route === "/dashboard" ? "page" : undefined
+                }
+              >
+                Admin Dashboard
+              </a>
+            </Link>
+          );
+  };
+
   return (
     <nav id="navbar" className="bg-purple-900">
       <div className="px-10 py-4">
@@ -56,6 +79,7 @@ export default function Navbar({ getHeight }: NavBarProps) {
                 </a>
               </Link>
             ))}
+            {returnAdminDashboardLink()}
           </div>
           <div className="flex items-center">
             {auth === null || auth?.user === null ? null : (

@@ -54,7 +54,7 @@ export const UserExperience: React.FC<UserExperienceProps> = ({ user_id }) => {
   const [exp, setExp] = useState<string[]>([]);
 
   useEffect(() => {
-    setExp(["", "", "", ""]);
+    setExp([""]);
   }, [user_id]);
 
   if (exp === undefined) {

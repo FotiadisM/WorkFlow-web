@@ -93,7 +93,7 @@ export default function UserProfile() {
               fe.push({
                 id: "",
                 type: "post",
-                perpetrator_id: "1",
+                perpetator_id: "1",
                 post_id: posts[i].id,
               });
             }
